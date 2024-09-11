@@ -4,6 +4,7 @@ import Image from 'next/image';
 import styles from './page.module.css';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link'; // Import Link for client-side navigation
 
 export default function HomePage() {
   const [featuredProducts, setFeaturedProducts] = useState([]);
@@ -46,20 +47,19 @@ export default function HomePage() {
         <p>Check out some of our top picks for you.</p>
         <div className={styles.productList}>
           {featuredProducts.map((product) => (
-            <div key={product.id} className={styles.productCard}>
-              <Image
-                src={product.thumbnail}
-                alt={product.title}
-                width={150}
-                height={150}
-                className={styles.productImage}
-              />
-              <h3>{product.title}</h3>
-              <p>${product.price.toFixed(2)}</p>
-              <a href={`/products/${product.id}`} className={styles.viewDetails}>
-                View Details
-              </a>
-            </div>
+            <Link href={`/products/${product.id}`} key={product.id}>
+              <div className={styles.productCard}>
+                <Image
+                  src={product.thumbnail}
+                  alt={product.title}
+                  width={150}
+                  height={150}
+                  className={styles.productImage}
+                />
+                <h3 className={styles.productTitle}>{product.title}</h3>
+                <p className={styles.productPrice}>${product.price.toFixed(2)}</p>
+              </div>
+            </Link>
           ))}
         </div>
         <button onClick={handleViewAll} className={styles.viewAll}>

@@ -2,17 +2,16 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import styles from './products.module.css';
 
-function fetchProducts(limit, skip) {
-  return fetch(`https://next-ecommerce-api.vercel.app/products?limit=${limit}&skip=${skip}`)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Failed to fetch products');
-      }
-      return response.json();
-    });
-}
+const fetchProducts = async (limit, skip) => {
+  const response = await fetch(`https://next-ecommerce-api.vercel.app/products?limit=${limit}&skip=${skip}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch products');
+  }
+  return response.json();
+};
 
 export default function ProductsPage() {
   const router = useRouter();
@@ -26,7 +25,9 @@ export default function ProductsPage() {
     setLoading(true);
     setError(null);
 
-    fetchProducts(20, (page - 1) * 20)
+    const skip = (page - 1) * 20 + 20;
+
+    fetchProducts(20, skip)
       .then(data => setProducts(data))
       .catch(err => setError('Error loading products'))
       .finally(() => setLoading(false));
@@ -34,6 +35,12 @@ export default function ProductsPage() {
 
   const handleNextPage = () => {
     router.push(`/products?page=${page + 1}`);
+  };
+
+  const handlePreviousPage = () => {
+    if (page > 1) {
+      router.push(`/products?page=${page - 1}`);
+    }
   };
 
   if (loading && products.length === 0) return <p>Loading products...</p>;
@@ -53,20 +60,34 @@ export default function ProductsPage() {
           <p>No products available.</p>
         ) : (
           products.map((product) => (
-            <div key={product.id} className={styles.productCard}>
-              <img src={product.thumbnail} alt={product.title} />
-              <h2>{product.title}</h2>
-              <p>${product.price}</p>
-            </div>
+            <Link href={`/products/${product.id}`} key={product.id}>
+              <div className={styles.productCard}>
+                <img src={product.thumbnail} alt={product.title} />
+                <h2 className={styles.productTitle}>{product.title}</h2>
+                <p className={styles.productPrice}>${product.price.toFixed(2)}</p>
+              </div>
+            </Link>
           ))
         )}
       </section>
 
-      {products.length > 0 && (
-        <button onClick={handleNextPage} className={styles.nextPage}>
-          Next Page
-        </button>
-      )}
+      <div className={styles.paginationControls}>
+        {page > 1 && (
+          <button onClick={handlePreviousPage} className={styles.prevPage}>
+            Previous Page
+          </button>
+        )}
+        {products.length > 0 && (
+          <button onClick={handleNextPage} className={styles.nextPage}>
+            Next Page
+          </button>
+        )}
+      </div>
+
+      <footer className={styles.footer}>
+        <p>© 2024 E-Commerce Store</p>
+        <a href="#">Privacy Policy</a>
+      </footer>
     </div>
   );
 }
