@@ -1,94 +1,74 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client';
 
-export default function Home() {
+import Image from 'next/image';
+import styles from './page.module.css';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+export default function HomePage() {
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+
+    fetch('https://next-ecommerce-api.vercel.app/products?limit=20')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch products');
+        }
+        return response.json();
+      })
+      .then(data => setFeaturedProducts(data))
+      .catch(err => setError('Error fetching featured products'))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return <p>Loading featured products...</p>;
+  if (error) return <p>{error}</p>;
+
+  const handleViewAll = () => {
+    router.push('/products?page=1');
+  };
+
   return (
     <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>app/page.js</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+      <header className={styles.header}>
+        <h1>Welcome to Our E-Commerce Store</h1>
+        <p>Your one-stop shop for amazing products!</p>
+      </header>
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
+      <section className={styles.featuredProducts}>
+        <h2>Featured Products</h2>
+        <p>Check out some of our top picks for you.</p>
+        <div className={styles.productList}>
+          {featuredProducts.map((product) => (
+            <div key={product.id} className={styles.productCard}>
+              <Image
+                src={product.thumbnail}
+                alt={product.title}
+                width={150}
+                height={150}
+                className={styles.productImage}
+              />
+              <h3>{product.title}</h3>
+              <p>${product.price.toFixed(2)}</p>
+              <a href={`/products/${product.id}`} className={styles.viewDetails}>
+                View Details
+              </a>
+            </div>
+          ))}
         </div>
-      </main>
+        <button onClick={handleViewAll} className={styles.viewAll}>
+          View All Products
+        </button>
+      </section>
+
       <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+        <p>© 2024 E-Commerce Store</p>
       </footer>
     </div>
   );
