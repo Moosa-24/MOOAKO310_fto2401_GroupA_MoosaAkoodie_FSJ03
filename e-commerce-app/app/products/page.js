@@ -25,7 +25,7 @@ export default function ProductsPage() {
     setLoading(true);
     setError(null);
 
-    const skip = (page - 1) * 20 + 20;
+    const skip = (page - 1) * 20;
 
     fetchProducts(20, skip)
       .then(data => setProducts(data))

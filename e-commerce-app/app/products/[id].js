@@ -1,9 +1,11 @@
+// app/products/[id].js
+
 'use client';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import styles from './productDetails.module.css'; // Create this file for styling
+import styles from './productDetails.module.css';
 
 const fetchProductDetails = async (id) => {
   const response = await fetch(`https://next-ecommerce-api.vercel.app/products/${id}`);
@@ -14,7 +16,7 @@ const fetchProductDetails = async (id) => {
 };
 
 export default function ProductDetailsPage({ params }) {
-  const { id } = params;
+  const { id } = params; // Retrieve the product ID from route params
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -38,22 +40,14 @@ export default function ProductDetailsPage({ params }) {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <button onClick={() => router.back()} className={styles.backButton}>
-          Back
+        <button onClick={() => router.push('/products')} className={styles.backButton}>
+          Back to Products
         </button>
       </header>
 
       <section className={styles.productDetails}>
-        <Image
-          src={product.thumbnail}
-          alt={product.title}
-          width={500}
-          height={500}
-          className={styles.productImage}
-        />
-        <h1 className={styles.productTitle}>{product.title}</h1>
-        <p className={styles.productPrice}>${product.price.toFixed(2)}</p>
-        <p className={styles.productDescription}>{product.description}</p>
+      <h3 className={styles.productTitle}>{product.title}</h3>
+      <p className={styles.productPrice}>${product.price.toFixed(2)}</p>
       </section>
 
       <footer className={styles.footer}>
