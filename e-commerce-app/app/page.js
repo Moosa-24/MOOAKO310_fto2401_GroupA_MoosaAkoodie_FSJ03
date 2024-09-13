@@ -6,6 +6,15 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link'; // Import Link for client-side navigation
 
+/**
+ * HomePage component displays a welcome message, featured products, and a link to view all products.
+ * 
+ * This component fetches a list of featured products from an API and displays them in a grid.
+ * It includes a button to navigate to the Products page to view all products.
+ * It handles loading and error states while fetching the featured products.
+ * 
+ * @returns {JSX.Element} The rendered component.
+ */
 export default function HomePage() {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,6 +40,11 @@ export default function HomePage() {
   if (loading) return <p>Loading featured products...</p>;
   if (error) return <p>{error}</p>;
 
+  /**
+   * Handles navigation to the Products page.
+   * 
+   * Navigates to the Products page with the query parameter to show the first page of products.
+   */
   const handleViewAll = () => {
     router.push('/products?page=1');
   };

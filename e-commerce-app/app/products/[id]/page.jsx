@@ -5,6 +5,13 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import styles from '../productDetails.module.css';
 
+/**
+ * Fetches the details of a product by its ID from the API.
+ * 
+ * @param {string} id - The ID of the product to fetch.
+ * @returns {Promise<Object>} A promise that resolves to the product details.
+ * @throws {Error} Throws an error if the fetch operation fails.
+ */
 const fetchProductDetails = async (id) => {
   const response = await fetch(`https://next-ecommerce-api.vercel.app/products/${id}`);
   if (!response.ok) {
@@ -13,6 +20,22 @@ const fetchProductDetails = async (id) => {
   return response.json();
 };
 
+/**
+ * ProductDetailsPage component fetches and displays detailed information about a single product.
+ * 
+ * This component uses the product ID from route parameters to fetch product details from an API.
+ * It handles loading, error states, and displays product information including images, title, description,
+ * price, category, tags, rating, stock availability, and reviews. It also provides navigation buttons
+ * to return to the products list or home page.
+ * 
+ * @param {Object} props - Component props.
+ * @param {Object} props.params - Route parameters.
+ * @param {string} props.params.id - The ID of the product to fetch.
+ * 
+ * @returns {JSX.Element} The rendered component.
+ * 
+ * @throws {Error} Throws an error if the product details fail to fetch.
+ */
 export default function ProductDetailsPage({ params }) {
   const { id } = params; // Retrieve the product ID from route params
   const [product, setProduct] = useState(null);
