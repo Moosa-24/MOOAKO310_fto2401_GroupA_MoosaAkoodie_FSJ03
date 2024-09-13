@@ -83,6 +83,12 @@
   margin: 12px 0;
 }
 
+p.productCategory {
+  font-size: 1rem;
+  color: black;
+  margin-top: 8px;
+}
+
 p.productPrice {
   font-size: 1.125rem;
   color: black;

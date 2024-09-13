@@ -57,6 +57,7 @@ export default function HomePage() {
                   className={styles.productImage}
                 />
                 <h3 className={styles.productTitle}>{product.title}</h3>
+                <p className={styles.productCategory}>Category: {product.category}</p>
                 <p className={styles.productPrice}>${product.price.toFixed(2)}</p>
               </div>
             </Link>

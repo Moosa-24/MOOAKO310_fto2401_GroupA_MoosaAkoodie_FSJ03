@@ -52,8 +52,14 @@
 
 .productTitle {
   font-size: 1.5rem;
-  color: #333;
+  color: black;
   margin: 12px 0;
+}
+
+.productCategory {
+  font-size: 1rem;
+  color: #666;
+  margin-top: 8px;
 }
 
 .productPrice {

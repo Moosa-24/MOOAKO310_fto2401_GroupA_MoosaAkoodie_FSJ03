@@ -62,9 +62,10 @@ export default function ProductsPage() {
           products.map((product) => (
             <Link href={`/products/${product.id}`} key={product.id}>
               <div className={styles.productCard}>
-                <img src={product.thumbnail} alt={product.title} />
+                <img src={product.thumbnail} alt={product.title} className={styles.productImage} />
                 <h2 className={styles.productTitle}>{product.title}</h2>
                 <p className={styles.productPrice}>${product.price.toFixed(2)}</p>
+                <p className={styles.productCategory}>Category: {product.category}</p>
               </div>
             </Link>
           ))
