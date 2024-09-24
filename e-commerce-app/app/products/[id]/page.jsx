@@ -5,13 +5,6 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import styles from '../productDetails.module.css';
 
-/**
- * Fetches the details of a product by its ID from the API.
- * 
- * @param {string} id - The ID of the product to fetch.
- * @returns {Promise<Object>} A promise that resolves to the product details.
- * @throws {Error} Throws an error if the fetch operation fails.
- */
 const fetchProductDetails = async (id) => {
   const response = await fetch(`https://next-ecommerce-api.vercel.app/products/${id}`);
   if (!response.ok) {
@@ -20,27 +13,12 @@ const fetchProductDetails = async (id) => {
   return response.json();
 };
 
-/**
- * ProductDetailsPage component fetches and displays detailed information about a single product.
- * 
- * This component uses the product ID from route parameters to fetch product details from an API.
- * It handles loading, error states, and displays product information including images, title, description,
- * price, category, tags, rating, stock availability, and reviews. It also provides navigation buttons
- * to return to the products list or home page.
- * 
- * @param {Object} props - Component props.
- * @param {Object} props.params - Route parameters.
- * @param {string} props.params.id - The ID of the product to fetch.
- * 
- * @returns {JSX.Element} The rendered component.
- * 
- * @throws {Error} Throws an error if the product details fail to fetch.
- */
 export default function ProductDetailsPage({ params }) {
-  const { id } = params; // Retrieve the product ID from route params
+  const { id } = params;
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [sortOrder, setSortOrder] = useState('highest'); // Default sort order
   const router = useRouter();
 
   useEffect(() => {
@@ -52,6 +30,18 @@ export default function ProductDetailsPage({ params }) {
       .catch(err => setError('Error fetching product details'))
       .finally(() => setLoading(false));
   }, [id]);
+
+  const sortedReviews = () => {
+    if (!product || !product.reviews) return [];
+    
+    return product.reviews.sort((a, b) => {
+      if (sortOrder === 'highest') {
+        return b.rating - a.rating; // Sort descending
+      } else {
+        return a.rating - b.rating; // Sort ascending
+      }
+    });
+  };
 
   if (loading) return <p>Loading product details...</p>;
   if (error) return <p>{error}</p>;
@@ -70,7 +60,6 @@ export default function ProductDetailsPage({ params }) {
       </header>
 
       <section className={styles.productDetails}>
-        {/* Display the product image gallery */}
         <div className={styles.imageGallery}>
           {product.images && product.images.length > 1 ? (
             product.images.map((image, index) => (
@@ -114,10 +103,24 @@ export default function ProductDetailsPage({ params }) {
           {product.stock > 0 ? `In Stock: ${product.stock}` : 'Out of Stock'}
         </p>
 
+        {/* Sort Dropdown for Reviews */}
+        <div className={styles.sortContainer}>
+          <label htmlFor="sortReviews">Sort Reviews: </label>
+          <select
+            id="sortReviews"
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value)}
+            className={styles.sortSelect}
+          >
+            <option value="highest">Highest Rating First</option>
+            <option value="lowest">Lowest Rating First</option>
+          </select>
+        </div>
+
         <div className={styles.productReviews}>
           <h4>Reviews:</h4>
           {product.reviews && product.reviews.length > 0 ? (
-            product.reviews.map((review, index) => (
+            sortedReviews().map((review, index) => (
               <div key={index} className={styles.review}>
                 <p><strong>{review.reviewerName}</strong> ({new Date(review.date).toLocaleDateString()}):</p>
                 <p>Rating: {review.rating}</p>
