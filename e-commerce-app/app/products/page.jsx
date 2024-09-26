@@ -72,28 +72,58 @@ export default function ProductsPage() {
       .finally(() => setLoading(false));
   }, [page, searchQuery, category]); // Include category in dependencies
 
+  /**
+   * Handles navigating to the next page with current filters.
+   */
   const handleNextPage = () => {
     router.push(`/products?page=${page + 1}&search=${search}&category=${category}`);
   };
 
+  /**
+   * Handles navigating to the previous page with current filters.
+   */
   const handlePreviousPage = () => {
     if (page > 1) {
       router.push(`/products?page=${page - 1}&search=${search}&category=${category}`);
     }
   };
 
+  /**
+   * Handles search input changes.
+   * 
+   * @param {object} e - The event object from the input field.
+   */
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
   };
 
+  /**
+   * Submits the search query and navigates to the first page with the new query.
+   * 
+   * @param {object} e - The event object from the form submission.
+   */
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     router.push(`/products?page=1&search=${search}&category=${category}`);
   };
 
+  /**
+   * Handles category filter change and navigates to the first page with the selected category.
+   * 
+   * @param {object} e - The event object from the select dropdown.
+   */
   const handleCategoryChange = (e) => {
     setCategory(e.target.value);
     router.push(`/products?page=1&search=${search}&category=${e.target.value}`);
+  };
+
+  /**
+   * Resets the search query, category filter, and pagination to their default values.
+   */
+  const handleReset = () => {
+    setSearch('');
+    setCategory('');
+    router.push(`/products?page=1`); // Navigate to the default state (first page with no filters)
   };
 
   if (loading && products.length === 0) return <p>Loading products...</p>;
@@ -129,6 +159,11 @@ export default function ProductsPage() {
             ))}
           </select>
         </div>
+
+        {/* Reset button */}
+        <button onClick={handleReset} className={styles.resetButton}>
+          Reset Filters
+        </button>
       </header>
 
       <section className={styles.productsGrid}>

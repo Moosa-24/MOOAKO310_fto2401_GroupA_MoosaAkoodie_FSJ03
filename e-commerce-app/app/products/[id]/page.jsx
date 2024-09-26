@@ -47,7 +47,8 @@ export default function ProductDetailsPage({ params }) {
   if (error) return <p>{error}</p>;
 
   if (!product) return <p>No product found.</p>;
-
+ console.log('REVIEWS');
+ console.log(product.reviews);
   return (
     <div className={styles.page}>
       <header className={styles.header}>
