@@ -3,8 +3,16 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import Head from 'next/head'; // Import Head for SEO
 import styles from '../productDetails.module.css';
 
+/**
+ * Fetches product details from the API.
+ * @async
+ * @param {string} id - The ID of the product to fetch.
+ * @returns {Promise<Object>} A promise that resolves to the product details.
+ * @throws Will throw an error if the fetch fails.
+ */
 const fetchProductDetails = async (id) => {
   const response = await fetch(`https://next-ecommerce-api.vercel.app/products/${id}`);
   if (!response.ok) {
@@ -13,14 +21,23 @@ const fetchProductDetails = async (id) => {
   return response.json();
 };
 
+/**
+ * Displays the product details page.
+ * @param {Object} props - The component props.
+ * @param {Object} props.params - The route parameters.
+ * @param {string} props.params.id - The product ID from the route parameters.
+ * @returns {JSX.Element} The rendered product details page.
+ */
 export default function ProductDetailsPage({ params }) {
   const { id } = params;
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [sortOrder, setSortOrder] = useState('highest'); // Default sort order
+  const [sortCriteria, setSortCriteria] = useState('rating'); // Default sort criteria
   const router = useRouter();
 
+  // Fetch product details when component mounts or the product ID changes
   useEffect(() => {
     setLoading(true);
     setError(null);
@@ -33,12 +50,12 @@ export default function ProductDetailsPage({ params }) {
 
   const sortedReviews = () => {
     if (!product || !product.reviews) return [];
-    
+
     return product.reviews.sort((a, b) => {
-      if (sortOrder === 'highest') {
-        return b.rating - a.rating; // Sort descending
-      } else {
-        return a.rating - b.rating; // Sort ascending
+      if (sortCriteria === 'rating') {
+        return sortOrder === 'highest' ? b.rating - a.rating : a.rating - b.rating;
+      } else if (sortCriteria === 'date') {
+        return sortOrder === 'newest' ? new Date(b.date) - new Date(a.date) : new Date(a.date) - new Date(b.date);
       }
     });
   };
@@ -47,10 +64,41 @@ export default function ProductDetailsPage({ params }) {
   if (error) return <p>{error}</p>;
 
   if (!product) return <p>No product found.</p>;
- console.log('REVIEWS');
- console.log(product.reviews);
+
   return (
     <div className={styles.page}>
+      <Head>
+        <title>{product.title} - E-Commerce Store</title>
+        <meta name="description" content={product.description} />
+        <meta name="keywords" content={product.tags.join(', ')} />
+        <meta property="og:title" content={product.title} />
+        <meta property="og:description" content={product.description} />
+        <meta property="og:image" content={product.images && product.images.length > 0 ? product.images[0] : product.thumbnail} />
+        <meta property="og:url" content={`https://yourwebsite.com/products/${id}`} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={product.title} />
+        <meta name="twitter:description" content={product.description} />
+        <meta name="twitter:image" content={product.images && product.images.length > 0 ? product.images[0] : product.thumbnail} />
+
+        {/* Structured Data */}
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org/",
+          "@type": "Product",
+          "name": product.title,
+          "image": product.images && product.images.length > 0 ? product.images[0] : product.thumbnail,
+          "description": product.description,
+          "sku": product.id,
+          "offers": {
+            "@type": "Offer",
+            "url": `https://yourwebsite.com/products/${id}`,
+            "priceCurrency": "USD",
+            "price": product.price.toFixed(2),
+            "itemCondition": "https://schema.org/NewCondition",
+            "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
+          }
+        })}</script>
+      </Head>
+      
       <header className={styles.header}>
         <button onClick={() => router.push('/products')} className={styles.backButton}>
           Back to Products
@@ -108,13 +156,32 @@ export default function ProductDetailsPage({ params }) {
         <div className={styles.sortContainer}>
           <label htmlFor="sortReviews">Sort Reviews: </label>
           <select
-            id="sortReviews"
+            id="sortCriteria"
+            value={sortCriteria}
+            onChange={(e) => setSortCriteria(e.target.value)}
+            className={styles.sortSelect}
+          >
+            <option value="rating">By Rating</option>
+            <option value="date">By Date</option>
+          </select>
+
+          <select
+            id="sortOrder"
             value={sortOrder}
             onChange={(e) => setSortOrder(e.target.value)}
             className={styles.sortSelect}
           >
-            <option value="highest">Highest Rating First</option>
-            <option value="lowest">Lowest Rating First</option>
+            {sortCriteria === 'rating' ? (
+              <>
+                <option value="highest">Highest Rating First</option>
+                <option value="lowest">Lowest Rating First</option>
+              </>
+            ) : (
+              <>
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+              </>
+            )}
           </select>
         </div>
 

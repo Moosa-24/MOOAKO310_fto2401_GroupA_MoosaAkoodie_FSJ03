@@ -5,6 +5,7 @@ import styles from './page.module.css';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link'; // Import Link for client-side navigation
+import Head from 'next/head'; // Import Head for SEO meta tags
 
 /**
  * HomePage component displays a welcome message, featured products, and a link to view all products.
@@ -51,6 +52,14 @@ export default function HomePage() {
 
   return (
     <div className={styles.page}>
+      <Head>
+        <title>Home - Your E-Commerce Store</title>
+        <meta name="description" content="Welcome to our e-commerce store. Discover amazing products tailored just for you." />
+        <meta property="og:title" content="Home - Your E-Commerce Store" />
+        <meta property="og:description" content="Explore our featured products and shop the latest trends." />
+        <meta property="og:image" content="/images/home-og-image.jpg" />
+      </Head>
+
       <header className={styles.header}>
         <h1>Welcome to Our E-Commerce Store</h1>
         <p>Your one-stop shop for amazing products!</p>

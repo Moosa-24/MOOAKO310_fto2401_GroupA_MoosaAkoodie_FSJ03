@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import Head from 'next/head'; // Import Head component for SEO
 import styles from './products.module.css';
 
 /**
@@ -44,13 +45,13 @@ export default function ProductsPage() {
   const searchParams = useSearchParams();
   const page = parseInt(searchParams.get('page') || '1', 10);
   const searchQuery = searchParams.get('search') || '';
-  const categoryQuery = searchParams.get('category') || ''; // Get category from URL params
+  const categoryQuery = searchParams.get('category') || '';
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]); // State for categories
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [search, setSearch] = useState(searchQuery);
-  const [category, setCategory] = useState(categoryQuery); // State for category
+  const [category, setCategory] = useState(categoryQuery);
 
   // Fetch categories on component mount
   useEffect(() => {
@@ -70,7 +71,7 @@ export default function ProductsPage() {
       .then(data => setProducts(data))
       .catch(err => setError('Error loading products'))
       .finally(() => setLoading(false));
-  }, [page, searchQuery, category]); // Include category in dependencies
+  }, [page, searchQuery, category]);
 
   /**
    * Handles navigating to the next page with current filters.
@@ -123,7 +124,7 @@ export default function ProductsPage() {
   const handleReset = () => {
     setSearch('');
     setCategory('');
-    router.push(`/products?page=1`); // Navigate to the default state (first page with no filters)
+    router.push(`/products`); // Navigate to '/products'
   };
 
   if (loading && products.length === 0) return <p>Loading products...</p>;
@@ -131,6 +132,13 @@ export default function ProductsPage() {
 
   return (
     <div className={styles.page}>
+      <Head>
+        <title>{search ? `${search} Products` : 'Products'} | E-Commerce Store</title>
+        <meta name="description" content={`Browse ${search ? `${search} products` : 'our collection of products'} in various categories.`} />
+        <meta name="robots" content="index, follow" />
+        <meta name="keywords" content={search ? `${search}, products, e-commerce` : 'products, e-commerce'} />
+      </Head>
+
       <header className={styles.header}>
         <h1>Products</h1>
         <button onClick={() => router.push('/')} className={styles.homeButton}>
