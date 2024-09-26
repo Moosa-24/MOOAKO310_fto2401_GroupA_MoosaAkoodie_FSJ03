@@ -211,3 +211,5 @@ export default function ProductsPage() {
     </div>
   );
 }
+
+//used for extra git commit comments - ignore
