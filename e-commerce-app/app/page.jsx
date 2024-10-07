@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link'; // Import Link for client-side navigation
 import Head from 'next/head'; // Import Head for SEO meta tags
+import FirebaseTest from './test/firebaseTest'; // Adjust the path to the FirebaseTest component
 
 /**
  * HomePage component displays a welcome message, featured products, and a link to view all products.
@@ -89,6 +90,11 @@ export default function HomePage() {
         <button onClick={handleViewAll} className={styles.viewAll}>
           View All Products
         </button>
+      </section>
+
+      {/* Add the Firebase Test Component here */}
+      <section>
+        <FirebaseTest />
       </section>
 
       <footer className={styles.footer}>
