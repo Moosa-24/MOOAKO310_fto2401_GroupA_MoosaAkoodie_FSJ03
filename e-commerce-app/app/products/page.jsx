@@ -3,37 +3,21 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import Head from 'next/head'; // Import Head component for SEO
+import Head from 'next/head';
 import styles from './products.module.css';
 
-/**
- * Fetches a list of products with pagination, search query, and category filter.
- * 
- * @param {number} limit - The number of products to fetch.
- * @param {number} skip - The number of products to skip for pagination.
- * @param {string} searchQuery - The search query to filter products by title.
- * @param {string} category - The category to filter products.
- * @returns {Promise<Array>} A promise that resolves to an array of products.
- * @throws {Error} Throws an error if the fetch operation fails.
- */
 const fetchProducts = async (limit, skip, searchQuery, category) => {
   const query = searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : '';
   const categoryFilter = category ? `&category=${encodeURIComponent(category)}` : '';
-  const response = await fetch(`https://next-ecommerce-api.vercel.app/products?limit=${limit}&skip=${skip}${query}${categoryFilter}`);
+  const response = await fetch(`/api/products?limit=${limit}&skip=${skip}${query}${categoryFilter}`);
   if (!response.ok) {
     throw new Error('Failed to fetch products');
   }
   return response.json();
 };
 
-/**
- * Fetches a list of categories from the API.
- * 
- * @returns {Promise<Array>} A promise that resolves to an array of categories.
- * @throws {Error} Throws an error if the fetch operation fails.
- */
 const fetchCategories = async () => {
-  const response = await fetch(`https://next-ecommerce-api.vercel.app/categories`);
+  const response = await fetch('/api/categories');
   if (!response.ok) {
     throw new Error('Failed to fetch categories');
   }
@@ -53,14 +37,12 @@ export default function ProductsPage() {
   const [search, setSearch] = useState(searchQuery);
   const [category, setCategory] = useState(categoryQuery);
 
-  // Fetch categories on component mount
   useEffect(() => {
     fetchCategories()
       .then(data => setCategories(data))
       .catch(err => setError('Error loading categories'));
   }, []);
 
-  // Fetch products based on filters
   useEffect(() => {
     setLoading(true);
     setError(null);
@@ -73,58 +55,34 @@ export default function ProductsPage() {
       .finally(() => setLoading(false));
   }, [page, searchQuery, category]);
 
-  /**
-   * Handles navigating to the next page with current filters.
-   */
   const handleNextPage = () => {
     router.push(`/products?page=${page + 1}&search=${search}&category=${category}`);
   };
 
-  /**
-   * Handles navigating to the previous page with current filters.
-   */
   const handlePreviousPage = () => {
     if (page > 1) {
       router.push(`/products?page=${page - 1}&search=${search}&category=${category}`);
     }
   };
 
-  /**
-   * Handles search input changes.
-   * 
-   * @param {object} e - The event object from the input field.
-   */
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
   };
 
-  /**
-   * Submits the search query and navigates to the first page with the new query.
-   * 
-   * @param {object} e - The event object from the form submission.
-   */
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     router.push(`/products?page=1&search=${search}&category=${category}`);
   };
 
-  /**
-   * Handles category filter change and navigates to the first page with the selected category.
-   * 
-   * @param {object} e - The event object from the select dropdown.
-   */
   const handleCategoryChange = (e) => {
     setCategory(e.target.value);
     router.push(`/products?page=1&search=${search}&category=${e.target.value}`);
   };
 
-  /**
-   * Resets the search query, category filter, and pagination to their default values.
-   */
   const handleReset = () => {
     setSearch('');
     setCategory('');
-    router.push(`/products`); // Navigate to '/products'
+    router.push(`/products`);
   };
 
   if (loading && products.length === 0) return <p>Loading products...</p>;
@@ -145,7 +103,6 @@ export default function ProductsPage() {
           Back to Home
         </button>
 
-        {/* Search bar */}
         <form onSubmit={handleSearchSubmit} className={styles.searchForm}>
           <input
             type="text"
@@ -157,7 +114,6 @@ export default function ProductsPage() {
           <button type="submit" className={styles.searchButton}>Search</button>
         </form>
 
-        {/* Category filter */}
         <div className={styles.categoryFilter}>
           <label htmlFor="category">Filter by Category: </label>
           <select id="category" value={category} onChange={handleCategoryChange} className={styles.categorySelect}>
@@ -168,7 +124,6 @@ export default function ProductsPage() {
           </select>
         </div>
 
-        {/* Reset button */}
         <button onClick={handleReset} className={styles.resetButton}>
           Reset Filters
         </button>
@@ -211,5 +166,3 @@ export default function ProductsPage() {
     </div>
   );
 }
-
-//used for extra git commit comments - ignore

@@ -1,13 +1,21 @@
-import { db } from "../../utils/firebase"; // Adjust the import path
-import { collection, addDoc } from "firebase/firestore";
+// app/api/products/route.js
+import { NextResponse } from 'next/server';
 
-export async function POST(request) {
-    const productData = await request.json();
+export async function GET(req) {
+  const { searchParams } = new URL(req.url);
+  const limit = searchParams.get('limit') || 20;
+  const skip = searchParams.get('skip') || 0;
+  const searchQuery = searchParams.get('search') ? `&search=${encodeURIComponent(searchParams.get('search'))}` : '';
+  const category = searchParams.get('category') ? `&category=${encodeURIComponent(searchParams.get('category'))}` : '';
 
-    try {
-        const docRef = await addDoc(collection(db, "products"), productData);
-        return new Response(JSON.stringify({ id: docRef.id }), { status: 200 });
-    } catch (error) {
-        return new Response(JSON.stringify({ error: "Error uploading product data" }), { status: 500 });
+  try {
+    const response = await fetch(`https://next-ecommerce-api.vercel.app/products?limit=${limit}&skip=${skip}${searchQuery}${category}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch products');
     }
+    const data = await response.json();
+    return NextResponse.json(data);
+  } catch (error) {
+    return NextResponse.json({ error: 'Error fetching products' }, { status: 500 });
+  }
 }

@@ -10,7 +10,7 @@ import Head from 'next/head'; // Import Head for SEO meta tags
 /**
  * HomePage component displays a welcome message, featured products, and a link to view all products.
  * 
- * This component fetches a list of featured products from an API and displays them in a grid.
+ * This component fetches a list of featured products from the local API route and displays them in a grid.
  * It includes a button to navigate to the Products page to view all products.
  * It handles loading and error states while fetching the featured products.
  * 
@@ -26,7 +26,8 @@ export default function HomePage() {
     setLoading(true);
     setError(null);
 
-    fetch('https://next-ecommerce-api.vercel.app/products?limit=20')
+    // Fetching from the local API route
+    fetch('/api/products')
       .then(response => {
         if (!response.ok) {
           throw new Error('Failed to fetch products');
