@@ -1,69 +1,117 @@
 .page {
-    padding: 20px;
-  }
-  
-  .header {
-    margin-bottom: 20px;
-  }
-  
-  .backButton {
-    padding: 10px;
-    margin: 5px;
-    background-color: #0070f3;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-  }
-  
-  .productDetails {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .imageGallery {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  
-  .productImage {
-    max-width: 100%;
-    height: auto;
-  }
-  
-  .productTitle {
-    font-size: 2rem;
-    margin: 10px 0;
-  }
-  
-  .productPrice {
-    font-size: 1.5rem;
-    color: #0070f3;
-  }
-  
-  .productDescription {
-    margin: 20px 0;
-  }
-  
-  .productCategory,
-  .productTags,
-  .productRating,
-  .productStock,
-  .productAvailability {
-    margin: 10px 0;
-  }
-  
-  .productReviews {
-    margin-top: 20px;
-  }
-  
-  .review {
-    border-top: 1px solid #ddd;
-    padding: 10px 0;
-  }
-  
-  .review p {
-    margin: 5px 0;
-  }
-  
+  padding: 20px;
+  max-width: 1200px;
+  margin: auto;
+  background-color: #121212; /* Dark background */
+  color: #e0e0e0; /* Light gray text */
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.backButton {
+  padding: 10px 15px;
+  margin: 5px;
+  background-color: #0070f3; /* Takealot primary blue */
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s;
+}
+
+.backButton:hover {
+  background-color: #005bb5; /* Darker shade on hover */
+}
+
+.productDetails {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 8px;
+  padding: 20px;
+  background-color: #1e1e1e; /* Slightly lighter background for the details section */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Soft shadow effect */
+}
+
+.imageGallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.productImage {
+  width: 100%;
+  max-width: 500px; /* Fixed max-width */
+  height: auto;
+  border-radius: 8px;
+}
+
+.productTitle {
+  font-size: 2rem;
+  margin: 15px 0;
+  text-align: center;
+}
+
+.productPrice {
+  font-size: 1.8rem;
+  color: #ff4081; /* Bright pink for price */
+}
+
+.productDescription {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.productCategory,
+.productTags,
+.productRating,
+.productStock {
+  margin: 10px 0;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.sortContainer {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.sortSelect {
+  padding: 10px;
+  margin: 0 5px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #121212; /* Matching dark background */
+  color: #e0e0e0; /* Light gray text */
+}
+
+.productReviews {
+  margin-top: 30px;
+  width: 100%;
+  padding: 15px;
+  border-top: 1px solid #333; /* Divider for reviews section */
+}
+
+.review {
+  border-bottom: 1px solid #444; /* Subtle divider between reviews */
+  padding: 10px 0;
+}
+
+.review p {
+  margin: 5px 0;
+}
+
+.footer {
+  margin-top: 40px;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #888;
+}

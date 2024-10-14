@@ -3,8 +3,8 @@
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
-  background-color: black;
-  color: white;
+  background-color: black; /* Match CSS 1 */
+  color: white; /* Match CSS 1 */
 }
 
 /* Header Styles */
@@ -14,16 +14,16 @@
 }
 
 .header h1 {
-  font-size: 3rem;
-  font-weight: 700;
-  color: #fff;
+  font-size: 2.5rem; /* Match CSS 1 */
+  font-weight: 700; /* Keep strong font weight */
+  color: white; /* Match CSS 1 */
   margin-bottom: 10px;
   letter-spacing: 1px;
 }
 
 .header p {
-  font-size: 1.25rem;
-  color: #ddd;
+  font-size: 1rem; /* Reduce size to match CSS 1 */
+  color: #ddd; /* Keep a lighter shade */
   margin-top: 0;
   margin-bottom: 30px;
 }
@@ -34,15 +34,15 @@
 }
 
 .featuredProducts h2 {
-  font-size: 2rem;
-  font-weight: 600;
-  color: #fff;
+  font-size: 2rem; /* Match CSS 1 */
+  font-weight: 600; /* Keep strong font weight */
+  color: white; /* Match CSS 1 */
   margin-bottom: 15px;
 }
 
 .featuredProducts p {
-  font-size: 1rem;
-  color: #ddd;
+  font-size: 0.9rem; /* Match CSS 1 */
+  color: #ddd; /* Keep a lighter shade */
   margin-bottom: 20px;
 }
 
@@ -55,54 +55,48 @@
 
 /* Product Card */
 .productCard {
-  border: 1px solid #ddd;
+  border: 1px solid #333; /* Match CSS 1 */
   border-radius: 8px;
-  padding: 16px;
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 16px; /* Add some padding */
+  background-color: #222; /* Match CSS 1 */
   text-align: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.2s, box-shadow 0.2s; /* Match timing with CSS 1 */
 }
 
 .productCard:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: scale(1.05); /* Match CSS 1 hover effect */
 }
 
 .productImage {
   max-width: 100%;
   height: auto;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #333; /* Match border color */
   margin-bottom: 12px;
   border-radius: 8px;
 }
 
 .productTitle {
-  font-size: 1.5rem;
-  color: #333;
-  margin: 12px 0;
+  font-size: 1.2rem; /* Match CSS 1 */
+  color: white; /* Match CSS 1 */
+  margin: 10px; /* Match margin */
 }
 
-p.productCategory {
-  font-size: 1rem;
-  color: black;
-  margin-top: 8px;
+.productCategory, .productPrice {
+  font-size: 0.9rem; /* Match CSS 1 */
+  color: white; /* Match CSS 1 */
+  margin: 10px; /* Match margin */
 }
 
-p.productPrice {
-  font-size: 1.125rem;
-  color: black;
-}
-
+/* View Details Link */
 .viewDetails {
   display: block;
   margin-top: 10px;
-  color: #0070f3;
+  color: #0070f3; /* Keep original blue */
   text-decoration: none;
 }
 
 .viewDetails:hover {
-  text-decoration: underline;
+  text-decoration: underline; /* Keep hover effect */
 }
 
 /* View All Products Button */
@@ -112,70 +106,63 @@ p.productPrice {
   max-width: 200px;
   margin: 20px auto 0;
   padding: 12px;
-  background-color: #0070f3;
-  color: white;
+  background-color: #0070f3; /* Match button color */
+  color: white; /* Match button text color */
   border: none;
-  border-radius: 8px;
+  border-radius: 4px; /* Match CSS 1 */
   font-size: 1.125rem;
   text-align: center;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease;
+  transition: background-color 0.3s, transform 0.3s; /* Match timing */
 }
 
 .viewAll:hover {
-  background-color: #005bb5;
-  transform: translateY(-2px);
-}
-
-.viewAll:focus {
-  outline: 2px solid #0070f3;
-  outline-offset: 2px;
+  background-color: #005bb5; /* Match hover effect */
 }
 
 /* Add to your existing CSS */
-
 .authSection {
   margin: 20px 0;
 }
 
 .authLink {
   margin-right: 15px;
-  color: #0070f3;
+  color: #0070f3; /* Keep original blue */
   text-decoration: none;
 }
 
 .authLink:hover {
-  text-decoration: underline;
+  text-decoration: underline; /* Keep hover effect */
 }
 
 .signOutButton {
   padding: 8px 12px;
-  background-color: #e63946;
+  background-color: #e63946; /* Keep original red */
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s;
 }
 
 .signOutButton:hover {
-  background-color: #d62839;
+  background-color: #d62839; /* Keep hover effect */
 }
 
 /* Footer Styles */
 .footer {
   text-align: center;
-  font-size: 0.875rem;
-  color: #777;
+  font-size: 0.875rem; /* Match size */
+  color: #aaa; /* Match color */
 }
 
 .footer a {
-  color: #0070f3;
+  color: #0070f3; /* Keep original blue */
   text-decoration: none;
 }
 
 .footer a:hover {
-  text-decoration: underline;
+  text-decoration: underline; /* Keep hover effect */
 }
 
 /* Responsive Styles */
@@ -185,7 +172,7 @@ p.productPrice {
   }
 
   .main {
-    gap: 16px;
+    gap: 16px; /* Adjust as needed */
   }
 
   .ctas a {

@@ -49,7 +49,7 @@ export default function ProductsPage() {
       .catch(err => setError('Error loading categories'));
   }, []);
 
-  // Fetch products whenever the page, searchQuery, category or sort changes
+  // Fetch products whenever the page, searchQuery, category, or sort changes
   useEffect(() => {
     setLoading(true);
     setError(null);
@@ -116,6 +116,12 @@ export default function ProductsPage() {
         <button onClick={() => router.push('/')} className={styles.homeButton}>
           Back to Home
         </button>
+
+        {products.length > 0 && (
+          <button onClick={() => router.push('/products')} className={styles.backToProductsButton}>
+            Back to Products
+          </button>
+        )}
 
         <form onSubmit={handleSearchSubmit} className={styles.searchForm}>
           <input

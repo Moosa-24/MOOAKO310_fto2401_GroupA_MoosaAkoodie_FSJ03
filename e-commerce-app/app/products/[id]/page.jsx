@@ -1,15 +1,13 @@
-// app/products/[id]/page.jsx
 'use client';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import Head from 'next/head'; // Import Head for SEO
+import Head from 'next/head';
 import styles from '../productDetails.module.css';
 
-// Fetch product details from the API
 const fetchProductDetails = async (id) => {
-  const formattedId = id.padStart(3, '0'); // Format the ID to three digits (e.g., "001")
+  const formattedId = id.padStart(3, '0');
   const response = await fetch(`/api/products/${formattedId}`);
   if (!response.ok) {
     throw new Error('Failed to fetch product details');
@@ -22,15 +20,13 @@ export default function ProductDetailsPage({ params }) {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [sortOrder, setSortOrder] = useState('highest'); // Default sort order
-  const [sortCriteria, setSortCriteria] = useState('rating'); // Default sort criteria
+  const [sortOrder, setSortOrder] = useState('highest');
+  const [sortCriteria, setSortCriteria] = useState('rating');
   const router = useRouter();
 
-  // Fetch product details when component mounts or the product ID changes
   useEffect(() => {
     setLoading(true);
     setError(null);
-
     fetchProductDetails(id)
       .then(data => setProduct(data))
       .catch(err => setError('Error fetching product details'))
@@ -39,7 +35,6 @@ export default function ProductDetailsPage({ params }) {
 
   const sortedReviews = () => {
     if (!product || !product.reviews) return [];
-
     return product.reviews.sort((a, b) => {
       if (sortCriteria === 'rating') {
         return sortOrder === 'highest' ? b.rating - a.rating : a.rating - b.rating;
@@ -59,7 +54,6 @@ export default function ProductDetailsPage({ params }) {
         <title>{product.title} - E-Commerce Store</title>
         <meta name="description" content={product.description} />
         <meta name="keywords" content={product.tags.join(', ')} />
-        {/* Open Graph and Twitter Meta Tags */}
       </Head>
       
       <header className={styles.header}>
@@ -75,23 +69,10 @@ export default function ProductDetailsPage({ params }) {
         <div className={styles.imageGallery}>
           {product.images && product.images.length > 1 ? (
             product.images.map((image, index) => (
-              <Image
-                key={index}
-                src={image}
-                alt={product.title}
-                width={500}
-                height={500}
-                className={styles.productImage}
-              />
+              <Image key={index} src={image} alt={product.title} width={500} height={500} className={styles.productImage} />
             ))
           ) : (
-            <Image
-              src={product.thumbnail}
-              alt={product.title}
-              width={500}
-              height={500}
-              className={styles.productImage}
-            />
+            <Image src={product.thumbnail} alt={product.title} width={500} height={500} className={styles.productImage} />
           )}
         </div>
 
@@ -112,29 +93,16 @@ export default function ProductDetailsPage({ params }) {
         )}
 
         <p className={styles.productRating}>Rating: {product.rating}</p>
-        <p className={styles.productStock}>
-          {product.stock > 0 ? `In Stock: ${product.stock}` : 'Out of Stock'}
-        </p>
+        <p className={styles.productStock}>{product.stock > 0 ? `In Stock: ${product.stock}` : 'Out of Stock'}</p>
 
-        {/* Sort Dropdown for Reviews */}
         <div className={styles.sortContainer}>
           <label htmlFor="sortReviews">Sort Reviews: </label>
-          <select
-            id="sortCriteria"
-            value={sortCriteria}
-            onChange={(e) => setSortCriteria(e.target.value)}
-            className={styles.sortSelect}
-          >
+          <select id="sortCriteria" value={sortCriteria} onChange={(e) => setSortCriteria(e.target.value)} className={styles.sortSelect}>
             <option value="rating">By Rating</option>
             <option value="date">By Date</option>
           </select>
 
-          <select
-            id="sortOrder"
-            value={sortOrder}
-            onChange={(e) => setSortOrder(e.target.value)}
-            className={styles.sortSelect}
-          >
+          <select id="sortOrder" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} className={styles.sortSelect}>
             {sortCriteria === 'rating' ? (
               <>
                 <option value="highest">Highest Rating First</option>
