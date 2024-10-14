@@ -1,6 +1,7 @@
 // app/api/products/route.js
-import { db } from '../../utils/firebaseAdmin'; // Adjust the import path based on your structure
+import { db } from '../../utils/firebaseAdmin';
 import { NextResponse } from 'next/server';
+import Fuse from 'fuse.js';
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
@@ -12,24 +13,33 @@ export async function GET(request) {
   try {
     let productsRef = db.collection('products');
 
-    // Apply search filter if provided
-    if (search) {
-      productsRef = productsRef.where('title', '>=', search).where('title', '<=', search + '\uf8ff');
-    }
-
     // Apply category filter if provided and using array-contains
     if (category) {
       productsRef = productsRef.where('categories', 'array-contains', category);
     }
 
-    // Limit results based on pagination
-    const snapshot = await productsRef.limit(limit).get(); 
-    const products = snapshot.docs.map(doc => ({
+    // Fetch all matching products (without search yet)
+    const snapshot = await productsRef.get();
+    let products = snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),
     }));
 
-    return NextResponse.json(products);
+    // Use Fuse.js for fuzzy searching if a search term is provided
+    if (search) {
+      const fuse = new Fuse(products, {
+        keys: ['title'], // Search in the title field
+        threshold: 0.3,  // Adjust this value to make the search stricter or looser
+      });
+      const results = fuse.search(search);
+      products = results.map(result => result.item); // Extract the original items from the Fuse.js result
+    }
+
+    // Apply pagination (assuming page is 1-indexed)
+    const startIndex = (page - 1) * limit;
+    const paginatedProducts = products.slice(startIndex, startIndex + limit);
+
+    return NextResponse.json(paginatedProducts);
   } catch (error) {
     console.error('Error fetching products:', error);
     return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });

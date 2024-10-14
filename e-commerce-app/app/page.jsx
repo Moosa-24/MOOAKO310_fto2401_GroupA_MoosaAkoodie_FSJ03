@@ -17,8 +17,7 @@ export default function HomePage() {
     setLoading(true);
     setError(null);
 
-    // Fetching from the new Firestore API route
-    fetch('/api/products') // Change this line to point to your API route
+    fetch('/api/products')
       .then(response => {
         if (!response.ok) {
           throw new Error('Failed to fetch products');
@@ -63,7 +62,7 @@ export default function HomePage() {
             <Link href={`/products/${product.id}`} key={product.id}>
               <div className={styles.productCard}>
                 <Image
-                  src={product.thumbnail} // Ensure this field exists in your Firestore data
+                  src={product.thumbnail}
                   alt={product.title}
                   width={150}
                   height={150}
