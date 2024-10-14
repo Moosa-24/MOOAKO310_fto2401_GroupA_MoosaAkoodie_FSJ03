@@ -1,3 +1,4 @@
+// app/products/[id]/page.jsx
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -6,28 +7,16 @@ import Image from 'next/image';
 import Head from 'next/head'; // Import Head for SEO
 import styles from '../productDetails.module.css';
 
-/**
- * Fetches product details from the API.
- * @async
- * @param {string} id - The ID of the product to fetch.
- * @returns {Promise<Object>} A promise that resolves to the product details.
- * @throws Will throw an error if the fetch fails.
- */
+// Fetch product details from the API
 const fetchProductDetails = async (id) => {
-  const response = await fetch(`https://next-ecommerce-api.vercel.app/products/${id}`);
+  const formattedId = id.padStart(3, '0'); // Format the ID to three digits (e.g., "001")
+  const response = await fetch(`/api/products/${formattedId}`);
   if (!response.ok) {
     throw new Error('Failed to fetch product details');
   }
   return response.json();
 };
 
-/**
- * Displays the product details page.
- * @param {Object} props - The component props.
- * @param {Object} props.params - The route parameters.
- * @param {string} props.params.id - The product ID from the route parameters.
- * @returns {JSX.Element} The rendered product details page.
- */
 export default function ProductDetailsPage({ params }) {
   const { id } = params;
   const [product, setProduct] = useState(null);
@@ -62,7 +51,6 @@ export default function ProductDetailsPage({ params }) {
 
   if (loading) return <p>Loading product details...</p>;
   if (error) return <p>{error}</p>;
-
   if (!product) return <p>No product found.</p>;
 
   return (
@@ -71,32 +59,7 @@ export default function ProductDetailsPage({ params }) {
         <title>{product.title} - E-Commerce Store</title>
         <meta name="description" content={product.description} />
         <meta name="keywords" content={product.tags.join(', ')} />
-        <meta property="og:title" content={product.title} />
-        <meta property="og:description" content={product.description} />
-        <meta property="og:image" content={product.images && product.images.length > 0 ? product.images[0] : product.thumbnail} />
-        <meta property="og:url" content={`https://yourwebsite.com/products/${id}`} />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={product.title} />
-        <meta name="twitter:description" content={product.description} />
-        <meta name="twitter:image" content={product.images && product.images.length > 0 ? product.images[0] : product.thumbnail} />
-
-        {/* Structured Data */}
-        <script type="application/ld+json">{JSON.stringify({
-          "@context": "https://schema.org/",
-          "@type": "Product",
-          "name": product.title,
-          "image": product.images && product.images.length > 0 ? product.images[0] : product.thumbnail,
-          "description": product.description,
-          "sku": product.id,
-          "offers": {
-            "@type": "Offer",
-            "url": `https://yourwebsite.com/products/${id}`,
-            "priceCurrency": "USD",
-            "price": product.price.toFixed(2),
-            "itemCondition": "https://schema.org/NewCondition",
-            "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
-          }
-        })}</script>
+        {/* Open Graph and Twitter Meta Tags */}
       </Head>
       
       <header className={styles.header}>
@@ -136,6 +99,7 @@ export default function ProductDetailsPage({ params }) {
         <p className={styles.productDescription}>{product.description}</p>
         <p className={styles.productPrice}>${product.price.toFixed(2)}</p>
         <p className={styles.productCategory}>Category: {product.category}</p>
+
         {product.tags && product.tags.length > 0 && (
           <div className={styles.productTags}>
             <h4>Tags:</h4>

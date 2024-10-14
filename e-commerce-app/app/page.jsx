@@ -4,18 +4,9 @@ import Image from 'next/image';
 import styles from './page.module.css';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link'; // Import Link for client-side navigation
-import Head from 'next/head'; // Import Head for SEO meta tags
+import Link from 'next/link'; 
+import Head from 'next/head'; 
 
-/**
- * HomePage component displays a welcome message, featured products, and a link to view all products.
- * 
- * This component fetches a list of featured products from the local API route and displays them in a grid.
- * It includes a button to navigate to the Products page to view all products.
- * It handles loading and error states while fetching the featured products.
- * 
- * @returns {JSX.Element} The rendered component.
- */
 export default function HomePage() {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -26,15 +17,18 @@ export default function HomePage() {
     setLoading(true);
     setError(null);
 
-    // Fetching from the local API route
-    fetch('/api/products')
+    // Fetching from the new Firestore API route
+    fetch('/api/products') // Change this line to point to your API route
       .then(response => {
         if (!response.ok) {
           throw new Error('Failed to fetch products');
         }
         return response.json();
       })
-      .then(data => setFeaturedProducts(data))
+      .then(data => {
+        // Limit to 5 products for featured products
+        setFeaturedProducts(data.slice(0, 5));
+      })
       .catch(err => setError('Error fetching featured products'))
       .finally(() => setLoading(false));
   }, []);
@@ -42,11 +36,6 @@ export default function HomePage() {
   if (loading) return <p>Loading featured products...</p>;
   if (error) return <p>{error}</p>;
 
-  /**
-   * Handles navigation to the Products page.
-   * 
-   * Navigates to the Products page with the query parameter to show the first page of products.
-   */
   const handleViewAll = () => {
     router.push('/products?page=1');
   };
@@ -74,7 +63,7 @@ export default function HomePage() {
             <Link href={`/products/${product.id}`} key={product.id}>
               <div className={styles.productCard}>
                 <Image
-                  src={product.thumbnail}
+                  src={product.thumbnail} // Ensure this field exists in your Firestore data
                   alt={product.title}
                   width={150}
                   height={150}
@@ -90,10 +79,6 @@ export default function HomePage() {
         <button onClick={handleViewAll} className={styles.viewAll}>
           View All Products
         </button>
-        <div>
-            <h1>Welcome to My Product App</h1>
-            <a href="/upload">Upload Product</a>
-        </div>
       </section>
 
       <footer className={styles.footer}>

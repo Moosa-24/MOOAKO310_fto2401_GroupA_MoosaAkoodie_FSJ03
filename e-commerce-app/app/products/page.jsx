@@ -1,4 +1,4 @@
-'use client';
+'use client'; 
 
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -6,16 +6,18 @@ import Link from 'next/link';
 import Head from 'next/head';
 import styles from './products.module.css';
 
-const fetchProducts = async (limit, skip, searchQuery, category) => {
+// Fetch products function
+const fetchProducts = async (limit, page, searchQuery, category) => {
   const query = searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : '';
   const categoryFilter = category ? `&category=${encodeURIComponent(category)}` : '';
-  const response = await fetch(`/api/products?limit=${limit}&skip=${skip}${query}${categoryFilter}`);
+  const response = await fetch(`/api/products?limit=${limit}&page=${page}${query}${categoryFilter}`);
   if (!response.ok) {
     throw new Error('Failed to fetch products');
   }
   return response.json();
 };
 
+// Fetch categories function
 const fetchCategories = async () => {
   const response = await fetch('/api/categories');
   if (!response.ok) {
@@ -37,23 +39,23 @@ export default function ProductsPage() {
   const [search, setSearch] = useState(searchQuery);
   const [category, setCategory] = useState(categoryQuery);
 
+  // Fetch categories on component mount
   useEffect(() => {
     fetchCategories()
-      .then(data => setCategories(data))
+      .then(data => setCategories(data[0].categories)) // Adjust based on the API response
       .catch(err => setError('Error loading categories'));
   }, []);
 
+  // Fetch products whenever the page, searchQuery, or category changes
   useEffect(() => {
     setLoading(true);
     setError(null);
 
-    const skip = (page - 1) * 20;
-
-    fetchProducts(20, skip, searchQuery, category)
+    fetchProducts(20, page, searchQuery, category)
       .then(data => setProducts(data))
       .catch(err => setError('Error loading products'))
       .finally(() => setLoading(false));
-  }, [page, searchQuery, category]);
+  }, [page, searchQuery, category]); // Ensure category is included in the dependencies
 
   const handleNextPage = () => {
     router.push(`/products?page=${page + 1}&search=${search}&category=${category}`);
@@ -75,8 +77,9 @@ export default function ProductsPage() {
   };
 
   const handleCategoryChange = (e) => {
-    setCategory(e.target.value);
-    router.push(`/products?page=1&search=${search}&category=${e.target.value}`);
+    const selectedCategory = e.target.value;
+    setCategory(selectedCategory);
+    router.push(`/products?page=1&search=${search}&category=${selectedCategory}`); // Ensure this triggers a new fetch
   };
 
   const handleReset = () => {
@@ -85,6 +88,7 @@ export default function ProductsPage() {
     router.push(`/products`);
   };
 
+  // Rendering logic
   if (loading && products.length === 0) return <p>Loading products...</p>;
   if (error) return <p>{error}</p>;
 
@@ -133,35 +137,29 @@ export default function ProductsPage() {
         {products.length === 0 && !loading ? (
           <p>No products found.</p>
         ) : (
-          products.map((product) => (
-            <Link href={`/products/${product.id}`} key={product.id}>
-              <div className={styles.productCard}>
-                <img src={product.thumbnail} alt={product.title} className={styles.productImage} />
-                <h2 className={styles.productTitle}>{product.title}</h2>
-                <p className={styles.productPrice}>${product.price.toFixed(2)}</p>
-                <p className={styles.productCategory}>Category: {product.category}</p>
-              </div>
+          products.map(product => (
+            <Link href={`/products/${product.id}`} key={product.id} className={styles.productCard}>
+              <img src={product.thumbnail} alt={product.title} className={styles.productImage} />
+              <h2 className={styles.productTitle}>{product.title}</h2>
+              <p className={styles.productCategory}>Category: {product.category}</p>
+              <p className={styles.productPrice}>${product.price.toFixed(2)}</p>
             </Link>
           ))
         )}
       </section>
 
-      <div className={styles.paginationControls}>
-        {page > 1 && (
-          <button onClick={handlePreviousPage} className={styles.prevPage}>
-            Previous Page
-          </button>
-        )}
-        {products.length > 0 && (
-          <button onClick={handleNextPage} className={styles.nextPage}>
-            Next Page
-          </button>
-        )}
-      </div>
+      <footer className={styles.pagination}>
+        <button onClick={handlePreviousPage} disabled={page === 1} className={styles.paginationButton}>
+          Previous
+        </button>
+        <span>Page {page}</span>
+        <button onClick={handleNextPage} className={styles.paginationButton}>
+          Next
+        </button>
+      </footer>
 
       <footer className={styles.footer}>
         <p>© 2024 E-Commerce Store</p>
-        <a href="#">Privacy Policy</a>
       </footer>
     </div>
   );

@@ -1,21 +1,37 @@
 // app/api/products/route.js
+import { db } from '../../utils/firebaseAdmin'; // Adjust the import path based on your structure
 import { NextResponse } from 'next/server';
 
-export async function GET(req) {
-  const { searchParams } = new URL(req.url);
-  const limit = searchParams.get('limit') || 20;
-  const skip = searchParams.get('skip') || 0;
-  const searchQuery = searchParams.get('search') ? `&search=${encodeURIComponent(searchParams.get('search'))}` : '';
-  const category = searchParams.get('category') ? `&category=${encodeURIComponent(searchParams.get('category'))}` : '';
+export async function GET(request) {
+  const { searchParams } = new URL(request.url);
+  const limit = parseInt(searchParams.get('limit')) || 20; // Default limit
+  const page = parseInt(searchParams.get('page')) || 1; // Default page
+  const search = searchParams.get('search') || ''; // Get the search query
+  const category = searchParams.get('category') || ''; // Get the category filter
 
   try {
-    const response = await fetch(`https://next-ecommerce-api.vercel.app/products?limit=${limit}&skip=${skip}${searchQuery}${category}`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch products');
+    let productsRef = db.collection('products');
+
+    // Apply search filter if provided
+    if (search) {
+      productsRef = productsRef.where('title', '>=', search).where('title', '<=', search + '\uf8ff');
     }
-    const data = await response.json();
-    return NextResponse.json(data);
+
+    // Apply category filter if provided and using array-contains
+    if (category) {
+      productsRef = productsRef.where('categories', 'array-contains', category);
+    }
+
+    // Limit results based on pagination
+    const snapshot = await productsRef.limit(limit).get(); 
+    const products = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    return NextResponse.json(products);
   } catch (error) {
-    return NextResponse.json({ error: 'Error fetching products' }, { status: 500 });
+    console.error('Error fetching products:', error);
+    return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });
   }
 }
