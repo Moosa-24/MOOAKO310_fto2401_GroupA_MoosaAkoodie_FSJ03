@@ -1,3 +1,5 @@
+// app/page.js
+
 'use client';
 
 import Image from 'next/image';
@@ -6,14 +8,22 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link'; 
 import Head from 'next/head'; 
+import { auth } from './utils/firebase'; // Import auth
+import { onAuthStateChanged, signOut } from 'firebase/auth'; // Import required functions
 
 export default function HomePage() {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [user, setUser] = useState(null); // Track user authentication state
   const router = useRouter();
 
   useEffect(() => {
+    // Check authentication state
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user); // Set user if authenticated
+    });
+
     setLoading(true);
     setError(null);
 
@@ -30,6 +40,8 @@ export default function HomePage() {
       })
       .catch(err => setError('Error fetching featured products'))
       .finally(() => setLoading(false));
+
+    return () => unsubscribe(); // Clean up the subscription on unmount
   }, []);
 
   if (loading) return <p>Loading featured products...</p>;
@@ -37,6 +49,17 @@ export default function HomePage() {
 
   const handleViewAll = () => {
     router.push('/products?page=1');
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth); // Sign out the user
+      alert('You have been signed out.');
+      router.push('/'); // Redirect to home page
+    } catch (error) {
+      console.error('Error signing out:', error);
+      alert(error.message);
+    }
   };
 
   return (
@@ -52,6 +75,25 @@ export default function HomePage() {
       <header className={styles.header}>
         <h1>Welcome to Our E-Commerce Store</h1>
         <p>Your one-stop shop for amazing products!</p>
+        <div className={styles.authSection}>
+          {user ? (
+            <>
+              <p>Welcome, {user.email}</p>
+              <button onClick={handleSignOut} className={styles.signOutButton}>
+                Sign Out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link href="/auth/signIn" className={styles.authLink}>
+                Sign In
+              </Link>
+              <Link href="/auth/signUp" className={styles.authLink}>
+                Sign Up
+              </Link>
+            </>
+          )}
+        </div>
       </header>
 
       <section className={styles.featuredProducts}>

@@ -9,6 +9,7 @@ export async function GET(request) {
   const page = parseInt(searchParams.get('page')) || 1; // Default page
   const search = searchParams.get('search') || ''; // Get the search query
   const category = searchParams.get('category') || ''; // Get the category filter
+  const sort = searchParams.get('sort') || 'asc'; // Get the sort parameter, default to ascending
 
   try {
     let productsRef = db.collection('products');
@@ -34,6 +35,14 @@ export async function GET(request) {
       const results = fuse.search(search);
       products = results.map(result => result.item); // Extract the original items from the Fuse.js result
     }
+
+    // Sort products based on price
+    products.sort((a, b) => {
+      if (sort === 'desc') {
+        return b.price - a.price; // Sort descending
+      }
+      return a.price - b.price; // Sort ascending
+    });
 
     // Apply pagination (assuming page is 1-indexed)
     const startIndex = (page - 1) * limit;

@@ -7,10 +7,11 @@ import Head from 'next/head';
 import styles from './products.module.css';
 
 // Fetch products function
-const fetchProducts = async (limit, page, searchQuery, category) => {
+const fetchProducts = async (limit, page, searchQuery, category, sort) => {
   const query = searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : '';
   const categoryFilter = category ? `&category=${encodeURIComponent(category)}` : '';
-  const response = await fetch(`/api/products?limit=${limit}&page=${page}${query}${categoryFilter}`);
+  const sortOrder = sort ? `&sort=${encodeURIComponent(sort)}` : '';
+  const response = await fetch(`/api/products?limit=${limit}&page=${page}${query}${categoryFilter}${sortOrder}`);
   if (!response.ok) {
     throw new Error('Failed to fetch products');
   }
@@ -32,12 +33,14 @@ export default function ProductsPage() {
   const page = parseInt(searchParams.get('page') || '1', 10);
   const searchQuery = searchParams.get('search') || '';
   const categoryQuery = searchParams.get('category') || '';
+  const sortQuery = searchParams.get('sort') || 'asc'; // Get the sort parameter from the URL
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [search, setSearch] = useState(searchQuery);
   const [category, setCategory] = useState(categoryQuery);
+  const [sort, setSort] = useState(sortQuery); // New state for sorting
 
   // Fetch categories on component mount
   useEffect(() => {
@@ -46,24 +49,24 @@ export default function ProductsPage() {
       .catch(err => setError('Error loading categories'));
   }, []);
 
-  // Fetch products whenever the page, searchQuery, or category changes
+  // Fetch products whenever the page, searchQuery, category or sort changes
   useEffect(() => {
     setLoading(true);
     setError(null);
 
-    fetchProducts(20, page, searchQuery, category)
+    fetchProducts(20, page, searchQuery, category, sort) // Include sort in the fetch
       .then(data => setProducts(data))
       .catch(err => setError('Error loading products'))
       .finally(() => setLoading(false));
-  }, [page, searchQuery, category]); // Ensure category is included in the dependencies
+  }, [page, searchQuery, category, sort]); // Ensure sort is included in the dependencies
 
   const handleNextPage = () => {
-    router.push(`/products?page=${page + 1}&search=${search}&category=${category}`);
+    router.push(`/products?page=${page + 1}&search=${search}&category=${category}&sort=${sort}`);
   };
 
   const handlePreviousPage = () => {
     if (page > 1) {
-      router.push(`/products?page=${page - 1}&search=${search}&category=${category}`);
+      router.push(`/products?page=${page - 1}&search=${search}&category=${category}&sort=${sort}`);
     }
   };
 
@@ -73,18 +76,25 @@ export default function ProductsPage() {
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    router.push(`/products?page=1&search=${search}&category=${category}`);
+    router.push(`/products?page=1&search=${search}&category=${category}&sort=${sort}`);
   };
 
   const handleCategoryChange = (e) => {
     const selectedCategory = e.target.value;
     setCategory(selectedCategory);
-    router.push(`/products?page=1&search=${search}&category=${selectedCategory}`); // Ensure this triggers a new fetch
+    router.push(`/products?page=1&search=${search}&category=${selectedCategory}&sort=${sort}`); // Ensure this triggers a new fetch
+  };
+
+  const handleSortChange = (e) => {
+    const selectedSort = e.target.value;
+    setSort(selectedSort);
+    router.push(`/products?page=1&search=${search}&category=${category}&sort=${selectedSort}`); // Ensure this triggers a new fetch
   };
 
   const handleReset = () => {
     setSearch('');
     setCategory('');
+    setSort('asc'); // Reset sort to default
     router.push(`/products`);
   };
 
@@ -125,6 +135,14 @@ export default function ProductsPage() {
             {categories.map((cat) => (
               <option value={cat} key={cat}>{cat}</option>
             ))}
+          </select>
+        </div>
+
+        <div className={styles.sortFilter}>
+          <label htmlFor="sort">Sort by Price: </label>
+          <select id="sort" value={sort} onChange={handleSortChange} className={styles.sortSelect}>
+            <option value="asc">Price: Low to High</option>
+            <option value="desc">Price: High to Low</option>
           </select>
         </div>
 
