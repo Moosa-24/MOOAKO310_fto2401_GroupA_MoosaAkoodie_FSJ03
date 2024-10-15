@@ -15,14 +15,31 @@ const SignUp = () => {
     e.preventDefault();
     setIsLoading(true);
     setErrorMessage(''); // Reset error message
+
     try {
       await createUserWithEmailAndPassword(auth, email, password);
       alert('User created successfully');
     } catch (error) {
       console.error('Error signing up:', error);
-      setErrorMessage(error.message); // Set error message
+      handleError(error.code); // Handle error
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleError = (errorCode) => {
+    switch (errorCode) {
+      case 'auth/email-already-in-use':
+        setErrorMessage('This email is already in use. Please use a different email.');
+        break;
+      case 'auth/invalid-email':
+        setErrorMessage('Please enter a valid email address.');
+        break;
+      case 'auth/weak-password':
+        setErrorMessage('Password should be at least 6 characters.');
+        break;
+      default:
+        setErrorMessage('An error occurred. Please try again later.');
     }
   };
 
@@ -32,7 +49,7 @@ const SignUp = () => {
       <input
         type="email"
         id="email"
-        className={styles.inputField} // Apply the new class
+        className={styles.inputField}
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         required
@@ -42,7 +59,7 @@ const SignUp = () => {
       <input
         type="password"
         id="password"
-        className={styles.inputField} // Apply the new class
+        className={styles.inputField}
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         required
