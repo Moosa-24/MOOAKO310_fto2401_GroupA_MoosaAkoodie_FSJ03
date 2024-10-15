@@ -11,6 +11,20 @@
     "start_url": ".",
     "display": "standalone",
     "theme_color": "#317EFB",
-    "background_color": "#FFFFFF"
+    "background_color": "#FFFFFF",
+    "screenshots": [
+      {
+        "src": "/screenshots/Screenshot1.png",
+        "sizes": "1460x845",
+        "type": "image/png",
+        "label": "Home Page"
+      },
+      {
+        "src": "/screenshots/Screenshot2.png",
+        "sizes": "1483x865",
+        "type": "image/png",
+        "label": "Product Page"
+      }
+    ]
   }
   

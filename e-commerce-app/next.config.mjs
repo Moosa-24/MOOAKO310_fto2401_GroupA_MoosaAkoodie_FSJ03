@@ -1,9 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    images: {
-      domains: ['cdn.dummyjson.com'],
-    },
-  };
-  
-  export default nextConfig;
-  
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'cdn.dummyjson.com', // Your current domain
+        port: '', // Leave this empty for default
+        pathname: '/**', // Matches any path
+      },
+    ],
+  },
+};
+
+export default nextConfig;
