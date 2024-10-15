@@ -1,8 +1,10 @@
+// app/auth/signUp/page.jsx
+
 'use client'; 
 
 import { useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../utils/firebase'; // Adjust the path as necessary
+import { auth } from '../../utils/firebase';
 import styles from '../signUp.module.css';
 
 const SignUp = () => {
@@ -17,7 +19,12 @@ const SignUp = () => {
     setErrorMessage(''); // Reset error message
 
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const token = await userCredential.user.getIdToken(); // Get the token
+      
+      // Set token in a HttpOnly cookie (this is just a placeholder; use an API for setting cookies)
+      document.cookie = `token=${token}; HttpOnly; Secure; SameSite=Strict`;
+      
       alert('User created successfully');
     } catch (error) {
       console.error('Error signing up:', error);

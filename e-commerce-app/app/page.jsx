@@ -73,23 +73,20 @@ export default function HomePage() {
     }
   };
 
-  if (loading) return <p>Loading featured products...</p>;
-  if (error) return <p>{error}</p>;
-
-  const handleViewAll = () => {
-    router.push('/products?page=1');
-  };
-
   const handleSignOut = async () => {
     try {
       await signOut(auth); // Sign out the user
-      alert('You have been signed out.');
+      alert('You have been signed out.'); // Notify user
       router.push('/'); // Redirect to home page
     } catch (error) {
       console.error('Error signing out:', error);
-      alert(error.message);
+      alert(error.message); // Show error message
     }
   };
+
+  // Handle loading and error states
+  if (loading) return <p>Loading featured products...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <div className={styles.page}>
@@ -149,7 +146,7 @@ export default function HomePage() {
             </Link>
           ))}
         </div>
-        <button onClick={handleViewAll} className={styles.viewAll}>
+        <button onClick={() => router.push('/products?page=1')} className={styles.viewAll}>
           View All Products
         </button>
       </section>

@@ -1,8 +1,10 @@
-'use client'; 
+// app/auth/signIn/page.jsx
+
+'use client';  
 
 import { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../utils/firebase'; // Adjust the path as necessary
+import { auth } from '../../utils/firebase';
 import styles from '../signIn.module.css';
 
 const SignIn = () => {
@@ -17,7 +19,12 @@ const SignIn = () => {
     setErrorMessage(''); // Reset error message
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const token = await userCredential.user.getIdToken(); // Get the token
+      
+      // Set token in a HttpOnly cookie (this is just a placeholder; use an API for setting cookies)
+      document.cookie = `token=${token}; HttpOnly; Secure; SameSite=Strict`;
+      
       alert('User signed in successfully');
     } catch (error) {
       console.error('Error signing in:', error);
