@@ -22,6 +22,7 @@ The project is organized as follows:
 # Features
 HomePage: Displays a welcome message and a list of featured products.
 
+Sign in/up functionality
 Fetches featured products from an API.
 Shows loading and error states.
 Includes a button to navigate to the Products page.
@@ -34,6 +35,8 @@ ProductDetailsPage: Shows detailed information about a selected product.
 
 Fetches product details based on the product ID.
 Displays product images, title, description, price, category, tags, rating, stock status, and reviews.
+Leave an item review option(not working yet though)
+
 Code Quality
 The codebase is structured to ensure:
 
@@ -89,4 +92,4 @@ Vercel for hosting the Next.js application.
   JAVASCRIPT
 
  Ai:
-  ChatGPT(jsdoc comments, etc)
+  ChatGPT
