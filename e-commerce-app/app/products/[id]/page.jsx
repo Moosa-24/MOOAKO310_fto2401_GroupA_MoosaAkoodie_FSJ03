@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import Image from 'next/image';
 import Head from 'next/head';
 import styles from '../productDetails.module.css';
@@ -22,7 +23,19 @@ export default function ProductDetailsPage({ params }) {
   const [error, setError] = useState(null);
   const [sortOrder, setSortOrder] = useState('highest');
   const [sortCriteria, setSortCriteria] = useState('rating');
+  const [newReview, setNewReview] = useState({ rating: '', comment: '' });
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsAuthenticated(!!user); // Update authenticated state
+    });
+
+    // Clean up the subscription
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -32,6 +45,29 @@ export default function ProductDetailsPage({ params }) {
       .catch(err => setError('Error fetching product details'))
       .finally(() => setLoading(false));
   }, [id]);
+
+  const submitReview = async (e) => {
+    e.preventDefault();
+    const token = await getAuthToken(); // Implement your method to get the auth token
+
+    const response = await fetch(`/api/products/${id}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(newReview),
+    });
+
+    if (response.ok) {
+      const updatedProduct = await fetchProductDetails(id); // Re-fetch product details to include new review
+      setProduct(updatedProduct);
+      setNewReview({ rating: '', comment: '' }); // Reset the form
+    } else {
+      const errorData = await response.json();
+      setError(errorData.error || 'Failed to submit review');
+    }
+  };
 
   const sortedReviews = () => {
     if (!product || !product.reviews) return [];
@@ -131,6 +167,41 @@ export default function ProductDetailsPage({ params }) {
             <p>No reviews yet.</p>
           )}
         </div>
+
+        {/* Review Submission Form */}
+        {isAuthenticated ? (
+          <form onSubmit={submitReview} className={styles.reviewForm}>
+            <h4>Submit a Review:</h4>
+            <label htmlFor="rating">Rating:</label>
+            <select
+              id="rating"
+              value={newReview.rating}
+              onChange={(e) => setNewReview({ ...newReview, rating: e.target.value })}
+              required
+              className={styles.reviewInput}
+            >
+              <option value="" disabled>Select a rating</option>
+              <option value="1">1 Star</option>
+              <option value="2">2 Stars</option>
+              <option value="3">3 Stars</option>
+              <option value="4">4 Stars</option>
+              <option value="5">5 Stars</option>
+            </select>
+
+            <label htmlFor="comment">Comment:</label>
+            <textarea
+              id="comment"
+              value={newReview.comment}
+              onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
+              required
+              className={styles.reviewInput}
+            />
+
+            <button type="submit" className={styles.submitButton}>Submit Review</button>
+          </form>
+        ) : (
+          <p>You must be signed in to submit a review. Please log in.</p>
+        )}
       </section>
 
       <footer className={styles.footer}>

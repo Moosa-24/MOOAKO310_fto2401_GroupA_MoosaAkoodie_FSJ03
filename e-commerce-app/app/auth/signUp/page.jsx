@@ -2,7 +2,7 @@
 
 'use client'; 
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../utils/firebase';
 import styles from '../signUp.module.css';
@@ -12,6 +12,18 @@ const SignUp = () => {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      if (user) {
+        // Optionally, you can redirect the user or show a success message
+        alert('User is already signed in');
+      }
+    });
+
+    // Clean up the subscription
+    return () => unsubscribe();
+  }, []);
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -26,6 +38,7 @@ const SignUp = () => {
       document.cookie = `token=${token}; HttpOnly; Secure; SameSite=Strict`;
       
       alert('User created successfully');
+      // Redirect or perform any additional actions upon successful sign-up
     } catch (error) {
       console.error('Error signing up:', error);
       handleError(error.code); // Handle error
