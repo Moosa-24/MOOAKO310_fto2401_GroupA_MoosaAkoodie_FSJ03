@@ -48,9 +48,9 @@ export default function ProductDetailsPage({ params }) {
 
   const submitReview = async (e) => {
     e.preventDefault();
-    const token = await getAuthToken(); // Implement your method to get the auth token
+    const token = await getAuth().currentUser.getIdToken(); // Get the auth token
 
-    const response = await fetch(`/api/products/${id}`, {
+    const response = await fetch(`/api/products/${id}/reviews`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
