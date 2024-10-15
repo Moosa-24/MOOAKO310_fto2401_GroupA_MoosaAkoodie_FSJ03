@@ -8,6 +8,12 @@ import Head from 'next/head';
 import { auth } from '../../utils/firebaseClient';
 import styles from '../productDetails.module.css';
 
+/**
+ * Fetches product details from the API based on the given ID.
+ * @param {string} id - The ID of the product to fetch.
+ * @returns {Promise<Object>} The product details.
+ * @throws Will throw an error if the fetch fails.
+ */
 const fetchProductDetails = async (id) => {
     const formattedId = id.padStart(3, '0');
     const response = await fetch(`/api/products/${formattedId}`);
@@ -17,6 +23,12 @@ const fetchProductDetails = async (id) => {
     return response.json();
 };
 
+/**
+ * ProductDetailsPage component that displays details of a specific product.
+ * @param {Object} params - The parameters passed to the component.
+ * @param {string} params.id - The ID of the product to display.
+ * @returns {JSX.Element} The rendered product details page.
+ */
 export default function ProductDetailsPage({ params }) {
     const { id } = params;
     const [product, setProduct] = useState(null);
@@ -44,6 +56,10 @@ export default function ProductDetailsPage({ params }) {
             .finally(() => setLoading(false));
     }, [id]);
 
+    /**
+     * Submits a review for the product.
+     * @param {Event} e - The event triggered by the form submission.
+     */
     const submitReview = async (e) => {
         e.preventDefault();
         if (!auth.currentUser) return;
@@ -72,6 +88,10 @@ export default function ProductDetailsPage({ params }) {
         }
     };    
 
+    /**
+     * Sorts the reviews based on the selected criteria and order.
+     * @returns {Array} The sorted reviews.
+     */
     const sortedReviews = () => {
         if (!product || !product.reviews) return [];
         return product.reviews.sort((a, b) => {

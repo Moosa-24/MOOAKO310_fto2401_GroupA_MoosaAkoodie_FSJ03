@@ -3,6 +3,16 @@
 import { NextResponse } from 'next/server';
 import { verifyIdToken } from '../../utils/firebaseAdmin'; // Adjust the path if necessary
 
+/**
+ * Handles GET requests to the secure route, verifying the user's authentication.
+ *
+ * This function checks for an authorization header containing a Bearer token
+ * or a cookie with a token. If a valid token is found and verified, it responds
+ * with the user's UID. Otherwise, it responds with an unauthorized status.
+ *
+ * @param {Request} req - The incoming HTTP request object.
+ * @returns {Promise<NextResponse>} - A promise that resolves to a NextResponse object.
+ */
 export async function GET(req) {
   const authHeader = req.headers.get('authorization'); // Get the Authorization header
   const cookieString = req.headers.get('cookie'); // Get the cookie header

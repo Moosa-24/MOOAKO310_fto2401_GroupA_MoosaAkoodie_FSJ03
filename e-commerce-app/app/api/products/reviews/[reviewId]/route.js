@@ -3,7 +3,16 @@ import { NextResponse } from 'next/server';
 import { verifyIdToken } from '../../../../utils/firebaseAdmin';
 import admin from 'firebase-admin';
 
-// GET a specific review (not commonly needed, but included for completeness)
+/**
+ * GET a specific review by product ID and review ID.
+ * This endpoint is not commonly needed but included for completeness.
+ *
+ * @param {Request} request - The HTTP request object.
+ * @param {Object} params - The parameters object containing the product and review IDs.
+ * @param {string} params.id - The ID of the product.
+ * @param {string} params.reviewId - The ID of the review to fetch.
+ * @returns {Promise<NextResponse>} - A promise that resolves to a NextResponse containing the review or an error message.
+ */
 export async function GET(request, { params }) {
     const { id, reviewId } = params;
 
@@ -28,7 +37,15 @@ export async function GET(request, { params }) {
     }
 }
 
-// PUT to update a specific review
+/**
+ * PUT to update a specific review by product ID and review ID.
+ *
+ * @param {Request} request - The HTTP request object containing the updated review data.
+ * @param {Object} params - The parameters object containing the product and review IDs.
+ * @param {string} params.id - The ID of the product.
+ * @param {string} params.reviewId - The ID of the review to update.
+ * @returns {Promise<NextResponse>} - A promise that resolves to a NextResponse containing a success message or an error message.
+ */
 export async function PUT(request, { params }) {
     const { id, reviewId } = params;
     
@@ -66,7 +83,15 @@ export async function PUT(request, { params }) {
     }
 }
 
-// DELETE a specific review
+/**
+ * DELETE a specific review by product ID and review ID.
+ *
+ * @param {Request} request - The HTTP request object.
+ * @param {Object} params - The parameters object containing the product and review IDs.
+ * @param {string} params.id - The ID of the product.
+ * @param {string} params.reviewId - The ID of the review to delete.
+ * @returns {Promise<NextResponse>} - A promise that resolves to a NextResponse containing a success message or an error message.
+ */
 export async function DELETE(request, { params }) {
     const { id, reviewId } = params;
     

@@ -6,7 +6,16 @@ import Link from 'next/link';
 import Head from 'next/head';
 import styles from './products.module.css';
 
-// Fetch products function
+/**
+ * Fetches products from the API based on the provided parameters.
+ * @param {number} limit - The number of products to fetch.
+ * @param {number} page - The page number for pagination.
+ * @param {string} searchQuery - The search query to filter products.
+ * @param {string} category - The category to filter products.
+ * @param {string} sort - The sort order for products.
+ * @returns {Promise<Object[]>} - A promise that resolves to the fetched products.
+ * @throws {Error} - Throws an error if the fetch fails.
+ */
 const fetchProducts = async (limit, page, searchQuery, category, sort) => {
   const query = searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : '';
   const categoryFilter = category ? `&category=${encodeURIComponent(category)}` : '';
@@ -18,7 +27,11 @@ const fetchProducts = async (limit, page, searchQuery, category, sort) => {
   return response.json();
 };
 
-// Fetch categories function
+/**
+ * Fetches categories from the API.
+ * @returns {Promise<Object[]>} - A promise that resolves to the fetched categories.
+ * @throws {Error} - Throws an error if the fetch fails.
+ */
 const fetchCategories = async () => {
   const response = await fetch('/api/categories');
   if (!response.ok) {
@@ -27,20 +40,28 @@ const fetchCategories = async () => {
   return response.json();
 };
 
+/**
+ * The ProductsPage component displays a list of products with filtering and sorting options.
+ * @returns {JSX.Element} - The rendered products page.
+ */
 export default function ProductsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  
+  // Get search parameters from the URL
   const page = parseInt(searchParams.get('page') || '1', 10);
   const searchQuery = searchParams.get('search') || '';
   const categoryQuery = searchParams.get('category') || '';
-  const sortQuery = searchParams.get('sort') || 'asc'; // Get the sort parameter from the URL
+  const sortQuery = searchParams.get('sort') || 'asc';
+
+  // State for products, categories, loading status, error, search, category, and sort
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [search, setSearch] = useState(searchQuery);
   const [category, setCategory] = useState(categoryQuery);
-  const [sort, setSort] = useState(sortQuery); // New state for sorting
+  const [sort, setSort] = useState(sortQuery);
 
   // Fetch categories on component mount
   useEffect(() => {
@@ -54,43 +75,68 @@ export default function ProductsPage() {
     setLoading(true);
     setError(null);
 
-    fetchProducts(20, page, searchQuery, category, sort) // Include sort in the fetch
+    fetchProducts(20, page, searchQuery, category, sort)
       .then(data => setProducts(data))
       .catch(err => setError('Error loading products'))
       .finally(() => setLoading(false));
-  }, [page, searchQuery, category, sort]); // Ensure sort is included in the dependencies
+  }, [page, searchQuery, category, sort]);
 
+  /**
+   * Navigates to the next page of products.
+   */
   const handleNextPage = () => {
     router.push(`/products?page=${page + 1}&search=${search}&category=${category}&sort=${sort}`);
   };
 
+  /**
+   * Navigates to the previous page of products if not on the first page.
+   */
   const handlePreviousPage = () => {
     if (page > 1) {
       router.push(`/products?page=${page - 1}&search=${search}&category=${category}&sort=${sort}`);
     }
   };
 
+  /**
+   * Handles the change in the search input.
+   * @param {React.ChangeEvent<HTMLInputElement>} e - The change event for the input.
+   */
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
   };
 
+  /**
+   * Handles the submission of the search form.
+   * @param {React.FormEvent<HTMLFormElement>} e - The submit event for the form.
+   */
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     router.push(`/products?page=1&search=${search}&category=${category}&sort=${sort}`);
   };
 
+  /**
+   * Handles the change in selected category.
+   * @param {React.ChangeEvent<HTMLSelectElement>} e - The change event for the select element.
+   */
   const handleCategoryChange = (e) => {
     const selectedCategory = e.target.value;
     setCategory(selectedCategory);
-    router.push(`/products?page=1&search=${search}&category=${selectedCategory}&sort=${sort}`); // Ensure this triggers a new fetch
+    router.push(`/products?page=1&search=${search}&category=${selectedCategory}&sort=${sort}`);
   };
 
+  /**
+   * Handles the change in sorting option.
+   * @param {React.ChangeEvent<HTMLSelectElement>} e - The change event for the select element.
+   */
   const handleSortChange = (e) => {
     const selectedSort = e.target.value;
     setSort(selectedSort);
-    router.push(`/products?page=1&search=${search}&category=${category}&sort=${selectedSort}`); // Ensure this triggers a new fetch
+    router.push(`/products?page=1&search=${search}&category=${category}&sort=${selectedSort}`);
   };
 
+  /**
+   * Resets the filters for search, category, and sort.
+   */
   const handleReset = () => {
     setSearch('');
     setCategory('');

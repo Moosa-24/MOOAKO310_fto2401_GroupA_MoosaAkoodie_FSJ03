@@ -3,7 +3,14 @@ import { NextResponse } from 'next/server';
 import { verifyIdToken } from '../../../utils/firebaseAdmin'; // Import the token verification function
 import admin from 'firebase-admin'; // Import admin for Firestore operations if needed
 
-// GET method to fetch a product
+/**
+ * GET method to fetch a product by ID.
+ * 
+ * @param {Request} request - The incoming HTTP request.
+ * @param {Object} params - The route parameters.
+ * @param {string} params.id - The ID of the product to fetch.
+ * @returns {NextResponse} - The response containing the product data or an error message.
+ */
 export async function GET(request, { params }) {
     const { id } = params;
 
@@ -26,7 +33,14 @@ export async function GET(request, { params }) {
     }
 }
 
-// POST method to add a review
+/**
+ * POST method to add a review to a product.
+ * 
+ * @param {Request} request - The incoming HTTP request.
+ * @param {Object} params - The route parameters.
+ * @param {string} params.id - The ID of the product to add a review for.
+ * @returns {NextResponse} - The response indicating success or failure.
+ */
 export async function POST(request, { params }) {
     const { id } = params;
 
@@ -61,7 +75,14 @@ export async function POST(request, { params }) {
     }
 }
 
-// PATCH method to edit a review
+/**
+ * PATCH method to edit a review for a product.
+ * 
+ * @param {Request} request - The incoming HTTP request.
+ * @param {Object} params - The route parameters.
+ * @param {string} params.id - The ID of the product whose review is being edited.
+ * @returns {NextResponse} - The response indicating success or failure.
+ */
 export async function PATCH(request, { params }) {
     const { id } = params;
 
@@ -100,7 +121,14 @@ export async function PATCH(request, { params }) {
     }
 }
 
-// DELETE method to delete a review
+/**
+ * DELETE method to delete a review from a product.
+ * 
+ * @param {Request} request - The incoming HTTP request.
+ * @param {Object} params - The route parameters.
+ * @param {string} params.id - The ID of the product from which the review will be deleted.
+ * @returns {NextResponse} - The response indicating success or failure.
+ */
 export async function DELETE(request, { params }) {
     const { id } = params;
 

@@ -3,6 +3,13 @@
 
 import { useEffect } from "react";
 
+/**
+ * ServiceWorker component that registers a service worker for the application.
+ * This component uses the useEffect hook to check for service worker support
+ * in the browser and registers the service worker when the window loads.
+ *
+ * @returns {null} This component does not render any visible UI elements.
+ */
 export default function ServiceWorker() {
   useEffect(() => {
     // Check if the service worker is supported by the browser

@@ -1,6 +1,14 @@
 import { db, verifyIdToken } from '../../../../utils/firebaseAdmin'; // Adjust the path as needed
 import { NextResponse } from 'next/server';
 
+/**
+ * Handles POST requests to add a review for a product.
+ *
+ * @param {Request} request - The incoming request object containing the review data.
+ * @param {Object} context - The context object containing route parameters.
+ * @param {Object} context.params - The route parameters, including the product ID.
+ * @returns {Promise<NextResponse>} - Returns a NextResponse object with a JSON message indicating the result of the operation.
+ */
 export async function POST(request, { params }) {
     const { id } = params;
 

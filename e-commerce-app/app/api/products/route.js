@@ -3,8 +3,17 @@ import { db } from '../../utils/firebaseAdmin';
 import { NextResponse } from 'next/server';
 import Fuse from 'fuse.js';
 
+/**
+ * Handles GET requests to fetch products from the database.
+ * Supports search, filtering by category, sorting, and pagination.
+ * 
+ * @param {Request} request - The incoming HTTP request.
+ * @returns {Promise<NextResponse>} A JSON response containing the products.
+ */
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
+  
+  // Parse query parameters
   const limit = parseInt(searchParams.get('limit')) || 20; // Default limit
   const page = parseInt(searchParams.get('page')) || 1; // Default page
   const search = searchParams.get('search') || ''; // Get the search query

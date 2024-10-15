@@ -2,6 +2,16 @@
 import { db } from '../../utils/firebaseAdmin';  // Adjust the path based on your project structure
 import { NextResponse } from 'next/server';
 
+/**
+ * Handles GET requests to fetch all categories from the database.
+ *
+ * @async
+ * @function GET
+ * @returns {Promise<NextResponse>} A Promise that resolves to a NextResponse object containing
+ *                                  the list of categories in JSON format or an error message.
+ * 
+ * @throws {Error} Throws an error if fetching categories fails.
+ */
 export async function GET() {
   try {
     const categoriesRef = db.collection('categories'); // Access the 'categories' collection

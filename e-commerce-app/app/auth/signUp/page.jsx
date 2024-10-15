@@ -7,13 +7,27 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../utils/firebase';
 import styles from '../signUp.module.css';
 
+/**
+ * SignUp component for user registration.
+ *
+ * This component allows users to sign up using their email and password.
+ * It handles user state changes, displays error messages, and manages loading states.
+ *
+ * @returns {JSX.Element} The rendered SignUp form.
+ */
 const SignUp = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState(''); // State for user email input
+  const [password, setPassword] = useState(''); // State for user password input
+  const [errorMessage, setErrorMessage] = useState(''); // State for displaying error messages
+  const [isLoading, setIsLoading] = useState(false); // State for loading indicator
 
   useEffect(() => {
+    /**
+     * Effect to handle user authentication state.
+     * Listens for authentication state changes and alerts if the user is already signed in.
+     * 
+     * @returns {function} A cleanup function to unsubscribe from the listener.
+     */
     const unsubscribe = auth.onAuthStateChanged(user => {
       if (user) {
         // Optionally, you can redirect the user or show a success message
@@ -25,6 +39,12 @@ const SignUp = () => {
     return () => unsubscribe();
   }, []);
 
+  /**
+   * Handles user sign-up when the form is submitted.
+   * 
+   * @param {React.FormEvent<HTMLFormElement>} e - The form submission event.
+   * @returns {Promise<void>} A promise that resolves when the sign-up process is complete.
+   */
   const handleSignUp = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -47,6 +67,11 @@ const SignUp = () => {
     }
   };
 
+  /**
+   * Handles errors during the sign-up process and updates the error message state.
+   * 
+   * @param {string} errorCode - The error code returned by Firebase.
+   */
   const handleError = (errorCode) => {
     switch (errorCode) {
       case 'auth/email-already-in-use':

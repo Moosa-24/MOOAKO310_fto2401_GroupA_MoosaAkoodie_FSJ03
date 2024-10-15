@@ -11,12 +11,19 @@ import Head from 'next/head';
 import { auth } from './utils/firebase'; // Import auth
 import { onAuthStateChanged, signOut } from 'firebase/auth'; // Import required functions
 
+/**
+ * HomePage component - Displays the home page of the e-commerce store.
+ * It fetches featured products, manages user authentication, and renders
+ * the UI accordingly.
+ *
+ * @returns {JSX.Element} The rendered component.
+ */
 export default function HomePage() {
-  const [featuredProducts, setFeaturedProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [featuredProducts, setFeaturedProducts] = useState([]); // State to hold featured products
+  const [loading, setLoading] = useState(true); // State to track loading status
+  const [error, setError] = useState(null); // State to hold error messages
   const [user, setUser] = useState(null); // Track user authentication state
-  const router = useRouter();
+  const router = useRouter(); // Router for navigation
 
   useEffect(() => {
     // Check authentication state
@@ -45,7 +52,10 @@ export default function HomePage() {
     return () => unsubscribe(); // Clean up the subscription on unmount
   }, []);
 
-  // Call the secure API
+  /**
+   * Calls a secure API endpoint using the user's authentication token.
+   * Logs the data received from the API call or logs an error if it fails.
+   */
   const callSecureApi = async () => {
     const user = auth.currentUser;
 
@@ -73,6 +83,10 @@ export default function HomePage() {
     }
   };
 
+  /**
+   * Handles the user sign-out process. Signs the user out, shows a notification,
+   * and redirects to the home page.
+   */
   const handleSignOut = async () => {
     try {
       await signOut(auth); // Sign out the user
