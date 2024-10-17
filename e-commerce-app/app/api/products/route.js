@@ -1,19 +1,10 @@
-// app/api/products/route.js
-import { db } from '../../utils/firebaseAdmin';
+import { db } from '../../utils/firebase';
 import { NextResponse } from 'next/server';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import Fuse from 'fuse.js';
 
-/**
- * Handles GET requests to fetch products from the database.
- * Supports search, filtering by category, sorting, and pagination.
- * 
- * @param {Request} request - The incoming HTTP request.
- * @returns {Promise<NextResponse>} A JSON response containing the products.
- */
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
-  
-  // Parse query parameters
   const limit = parseInt(searchParams.get('limit')) || 20; // Default limit
   const page = parseInt(searchParams.get('page')) || 1; // Default page
   const search = searchParams.get('search') || ''; // Get the search query
@@ -21,15 +12,16 @@ export async function GET(request) {
   const sort = searchParams.get('sort') || 'asc'; // Get the sort parameter, default to ascending
 
   try {
-    let productsRef = db.collection('products');
+    let productsRef = collection(db, 'products');
+    let q = productsRef;
 
     // Apply category filter if provided and using array-contains
     if (category) {
-      productsRef = productsRef.where('categories', 'array-contains', category);
+      q = query(productsRef, where('categories', 'array-contains', category));
     }
 
     // Fetch all matching products (without search yet)
-    const snapshot = await productsRef.get();
+    const snapshot = await getDocs(q);
     let products = snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),

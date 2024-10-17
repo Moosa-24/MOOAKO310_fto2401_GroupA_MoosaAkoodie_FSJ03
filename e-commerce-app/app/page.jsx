@@ -11,19 +11,12 @@ import Head from 'next/head';
 import { auth } from './utils/firebase'; // Import auth
 import { onAuthStateChanged, signOut } from 'firebase/auth'; // Import required functions
 
-/**
- * HomePage component - Displays the home page of the e-commerce store.
- * It fetches featured products, manages user authentication, and renders
- * the UI accordingly.
- *
- * @returns {JSX.Element} The rendered component.
- */
 export default function HomePage() {
-  const [featuredProducts, setFeaturedProducts] = useState([]); // State to hold featured products
-  const [loading, setLoading] = useState(true); // State to track loading status
-  const [error, setError] = useState(null); // State to hold error messages
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [user, setUser] = useState(null); // Track user authentication state
-  const router = useRouter(); // Router for navigation
+  const router = useRouter();
 
   useEffect(() => {
     // Check authentication state
@@ -52,10 +45,7 @@ export default function HomePage() {
     return () => unsubscribe(); // Clean up the subscription on unmount
   }, []);
 
-  /**
-   * Calls a secure API endpoint using the user's authentication token.
-   * Logs the data received from the API call or logs an error if it fails.
-   */
+  // Call the secure API
   const callSecureApi = async () => {
     const user = auth.currentUser;
 
@@ -83,24 +73,23 @@ export default function HomePage() {
     }
   };
 
-  /**
-   * Handles the user sign-out process. Signs the user out, shows a notification,
-   * and redirects to the home page.
-   */
+  if (loading) return <p>Loading featured products...</p>;
+  if (error) return <p>{error}</p>;
+
+  const handleViewAll = () => {
+    router.push('/products?page=1');
+  };
+
   const handleSignOut = async () => {
     try {
       await signOut(auth); // Sign out the user
-      alert('You have been signed out.'); // Notify user
+      alert('You have been signed out.');
       router.push('/'); // Redirect to home page
     } catch (error) {
       console.error('Error signing out:', error);
-      alert(error.message); // Show error message
+      alert(error.message);
     }
   };
-
-  // Handle loading and error states
-  if (loading) return <p>Loading featured products...</p>;
-  if (error) return <p>{error}</p>;
 
   return (
     <div className={styles.page}>
@@ -160,7 +149,7 @@ export default function HomePage() {
             </Link>
           ))}
         </div>
-        <button onClick={() => router.push('/products?page=1')} className={styles.viewAll}>
+        <button onClick={handleViewAll} className={styles.viewAll}>
           View All Products
         </button>
       </section>

@@ -1,68 +1,24 @@
-// app/auth/signIn/page.jsx
+'use client'; 
 
-'use client';  
-
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../utils/firebase';
+import { auth } from '../../utils/firebase'; // Adjust the path as necessary
 import styles from '../signIn.module.css';
 
-/**
- * SignIn component allows users to sign in using email and password.
- * 
- * It handles user authentication with Firebase, manages state for email, 
- * password, error messages, and loading status. It also listens for changes 
- * in authentication state and provides feedback to the user.
- *
- * @returns {JSX.Element} The rendered SignIn component.
- */
 const SignIn = () => {
-  const [email, setEmail] = useState(''); // State for storing email input
-  const [password, setPassword] = useState(''); // State for storing password input
-  const [errorMessage, setErrorMessage] = useState(''); // State for storing error messages
-  const [isLoading, setIsLoading] = useState(false); // State for loading status
-  
-  useEffect(() => {
-    /**
-     * Subscribes to authentication state changes.
-     * Displays an alert if a user is already signed in.
-     *
-     * @function onAuthStateChanged
-     * @param {User} user - The currently signed-in user.
-     * @returns {Function} Cleanup function to unsubscribe from the listener.
-     */
-    const unsubscribe = auth.onAuthStateChanged(user => {
-      if (user) {
-        // Optionally, you can redirect the user or show a success message
-        alert('User is already signed in');
-      }
-    });
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-    // Clean up the subscription
-    return () => unsubscribe();
-  }, []);
-
-  /**
-   * Handles sign-in form submission.
-   * Attempts to sign in the user with email and password.
-   *
-   * @param {React.FormEvent<HTMLFormElement>} e - The form event.
-   * @returns {Promise<void>} A promise that resolves when the sign-in process is complete.
-   */
   const handleSignIn = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setErrorMessage(''); // Reset error message
 
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const token = await userCredential.user.getIdToken(); // Get the token
-      
-      // Set token in a HttpOnly cookie (this is just a placeholder; use an API for setting cookies)
-      document.cookie = `token=${token}; HttpOnly; Secure; SameSite=Strict`;
-      
+      await signInWithEmailAndPassword(auth, email, password);
       alert('User signed in successfully');
-      // Redirect or perform any additional actions upon successful sign-in
     } catch (error) {
       console.error('Error signing in:', error);
       handleError(error.code); // Handle error
@@ -71,11 +27,6 @@ const SignIn = () => {
     }
   };
 
-  /**
-   * Handles errors during sign-in based on error codes.
-   *
-   * @param {string} errorCode - The error code from Firebase Authentication.
-   */
   const handleError = (errorCode) => {
     switch (errorCode) {
       case 'auth/user-not-found':

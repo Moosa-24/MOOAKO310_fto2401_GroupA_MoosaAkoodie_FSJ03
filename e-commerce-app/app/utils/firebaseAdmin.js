@@ -1,34 +1,26 @@
-import admin from 'firebase-admin';
-import serviceAccount from '../../config/serviceAccountKey.json';
+// utils/firebaseAdmin.js
 
-/**
- * Initializes the Firebase Admin SDK if it hasn't been initialized already.
- */
+import admin from 'firebase-admin';
+import serviceAccount from '../config/serviceAccountKey.json'; // Ensure this path is correct
+
+// Initialize the Firebase Admin SDK
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount), // Use the service account JSON
   });
 }
 
-/**
- * Firestore database instance.
- * @type {Firestore}
- */
+// Export Firestore database instance
 export const db = admin.firestore();
 
-/**
- * Verifies the provided ID token.
- *
- * @param {string} token - The ID token to verify.
- * @returns {Promise<Object>} - A promise that resolves with the decoded token if verification is successful.
- * @throws {Error} - Throws an error if the verification fails.
- */
+// Function to verify ID tokens
 export const verifyIdToken = async (token) => {
   try {
+    // Verify the ID token and decode it
     const decodedToken = await admin.auth().verifyIdToken(token);
     return decodedToken;
   } catch (error) {
-    console.error('Error verifying ID token:', error);
-    throw new Error('Unauthorized');
+    console.error('Error verifying ID token:', error); // Log the error for debugging
+    throw new Error('Unauthorized'); // You may want to throw a specific error message if needed
   }
 };
