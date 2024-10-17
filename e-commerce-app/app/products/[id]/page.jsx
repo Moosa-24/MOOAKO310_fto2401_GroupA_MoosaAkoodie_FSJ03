@@ -6,6 +6,12 @@ import Image from 'next/image';
 import Head from 'next/head';
 import styles from '../productDetails.module.css';
 
+/**
+ * Fetches product details from the API based on the provided product ID.
+ * @param {string} id - The product ID to fetch details for.
+ * @returns {Promise<Object>} - A promise that resolves to the product details.
+ * @throws {Error} - Throws an error if the fetch operation fails.
+ */
 const fetchProductDetails = async (id) => {
   const formattedId = id.padStart(3, '0');
   const response = await fetch(`/api/products/${formattedId}`);
@@ -15,6 +21,13 @@ const fetchProductDetails = async (id) => {
   return response.json();
 };
 
+/**
+ * The ProductDetailsPage component displays detailed information about a specific product.
+ * It handles loading, error states, and sorting of product reviews.
+ * @param {Object} props - The component props.
+ * @param {Object} props.params - The route parameters containing the product ID.
+ * @returns {JSX.Element} - The rendered product details page.
+ */
 export default function ProductDetailsPage({ params }) {
   const { id } = params;
   const [product, setProduct] = useState(null);
@@ -33,6 +46,10 @@ export default function ProductDetailsPage({ params }) {
       .finally(() => setLoading(false));
   }, [id]);
 
+  /**
+   * Sorts the product reviews based on the selected criteria and order.
+   * @returns {Array} - An array of sorted reviews.
+   */
   const sortedReviews = () => {
     if (!product || !product.reviews) return [];
     return product.reviews.sort((a, b) => {

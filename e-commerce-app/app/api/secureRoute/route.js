@@ -3,6 +3,13 @@
 import { NextResponse } from 'next/server';
 import { verifyIdToken } from '../../utils/firebaseAdmin'; // Adjust the path if necessary
 
+/**
+ * Handles the GET request to the secure route.
+ *
+ * @param {Request} req - The incoming request object containing headers and other request details.
+ * @returns {Promise<NextResponse>} A promise that resolves to a NextResponse object,
+ * which contains a JSON response indicating whether access was granted or denied.
+ */
 export async function GET(req) {
   const authHeader = req.headers.get('authorization'); // Get the Authorization header
 

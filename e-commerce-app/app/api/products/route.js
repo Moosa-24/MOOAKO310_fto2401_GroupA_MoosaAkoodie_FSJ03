@@ -3,8 +3,16 @@ import { NextResponse } from 'next/server';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import Fuse from 'fuse.js';
 
+/**
+ * Handles the GET request to fetch products from the database.
+ *
+ * @param {Request} request - The incoming HTTP request object.
+ * @returns {Promise<Response>} - A promise that resolves to a JSON response containing the paginated and filtered products.
+ */
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
+  
+  // Parse query parameters
   const limit = parseInt(searchParams.get('limit')) || 20; // Default limit
   const page = parseInt(searchParams.get('page')) || 1; // Default page
   const search = searchParams.get('search') || ''; // Get the search query
@@ -15,7 +23,7 @@ export async function GET(request) {
     let productsRef = collection(db, 'products');
     let q = productsRef;
 
-    // Apply category filter if provided and using array-contains
+    // Apply category filter if provided using array-contains
     if (category) {
       q = query(productsRef, where('categories', 'array-contains', category));
     }

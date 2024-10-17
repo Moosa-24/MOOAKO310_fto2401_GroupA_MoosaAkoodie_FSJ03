@@ -3,17 +3,27 @@
 import admin from 'firebase-admin';
 import serviceAccount from '../config/serviceAccountKey.json'; // Ensure this path is correct
 
-// Initialize the Firebase Admin SDK
+/**
+ * Initializes the Firebase Admin SDK if it hasn't been initialized yet.
+ */
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount), // Use the service account JSON
   });
 }
 
-// Export Firestore database instance
+/**
+ * Firestore database instance.
+ * @type {FirebaseFirestore.Firestore}
+ */
 export const db = admin.firestore();
 
-// Function to verify ID tokens
+/**
+ * Verifies the given ID token and decodes it.
+ * @param {string} token - The ID token to verify.
+ * @returns {Promise<FirebaseAuth.DecodedIdToken>} The decoded ID token if verification is successful.
+ * @throws {Error} Throws an error if the ID token verification fails.
+ */
 export const verifyIdToken = async (token) => {
   try {
     // Verify the ID token and decode it

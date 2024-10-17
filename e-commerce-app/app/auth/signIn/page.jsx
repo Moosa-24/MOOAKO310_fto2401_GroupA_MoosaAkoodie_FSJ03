@@ -5,12 +5,26 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../utils/firebase'; // Adjust the path as necessary
 import styles from '../signIn.module.css';
 
+/**
+ * SignIn component for user authentication.
+ * 
+ * This component allows users to sign in using their email and password. 
+ * It handles form submission, displays error messages, and manages loading states.
+ *
+ * @returns {JSX.Element} The rendered SignIn component.
+ */
 const SignIn = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState(''); // User's email input
+  const [password, setPassword] = useState(''); // User's password input
+  const [errorMessage, setErrorMessage] = useState(''); // Error message state
+  const [isLoading, setIsLoading] = useState(false); // Loading state during sign-in
 
+  /**
+   * Handles the sign-in form submission.
+   * 
+   * @param {React.FormEvent<HTMLFormElement>} e - The form event.
+   * @returns {Promise<void>} 
+   */
   const handleSignIn = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -27,6 +41,11 @@ const SignIn = () => {
     }
   };
 
+  /**
+   * Handles authentication errors and sets appropriate error messages.
+   *
+   * @param {string} errorCode - The error code returned by Firebase.
+   */
   const handleError = (errorCode) => {
     switch (errorCode) {
       case 'auth/user-not-found':

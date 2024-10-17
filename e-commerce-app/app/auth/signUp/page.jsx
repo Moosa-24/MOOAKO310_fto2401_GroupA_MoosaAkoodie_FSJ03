@@ -5,12 +5,28 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../utils/firebase'; // Adjust the path as necessary
 import styles from '../signUp.module.css';
 
+/**
+ * SignUp component for user registration.
+ *
+ * This component allows users to create a new account using their email and password.
+ * It handles form submission, error management, and loading states.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered SignUp form.
+ */
 const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  /**
+   * Handles the sign-up form submission.
+   * Creates a new user with the provided email and password.
+   *
+   * @param {React.FormEvent<HTMLFormElement>} e - The form event.
+   * @returns {Promise<void>}
+   */
   const handleSignUp = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -27,6 +43,11 @@ const SignUp = () => {
     }
   };
 
+  /**
+   * Handles error messages based on error codes.
+   *
+   * @param {string} errorCode - The error code returned from Firebase.
+   */
   const handleError = (errorCode) => {
     switch (errorCode) {
       case 'auth/email-already-in-use':

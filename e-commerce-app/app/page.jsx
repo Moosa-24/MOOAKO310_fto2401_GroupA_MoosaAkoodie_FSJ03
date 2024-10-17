@@ -11,6 +11,12 @@ import Head from 'next/head';
 import { auth } from './utils/firebase'; // Import auth
 import { onAuthStateChanged, signOut } from 'firebase/auth'; // Import required functions
 
+/**
+ * HomePage component displays the main content of the e-commerce site,
+ * including featured products, user authentication status, and navigation links.
+ *
+ * @returns {JSX.Element} The rendered HomePage component.
+ */
 export default function HomePage() {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -45,7 +51,13 @@ export default function HomePage() {
     return () => unsubscribe(); // Clean up the subscription on unmount
   }, []);
 
-  // Call the secure API
+  /**
+   * Calls a secure API endpoint if the user is authenticated,
+   * logging the response data to the console.
+   *
+   * @async
+   * @function
+   */
   const callSecureApi = async () => {
     const user = auth.currentUser;
 
@@ -76,10 +88,23 @@ export default function HomePage() {
   if (loading) return <p>Loading featured products...</p>;
   if (error) return <p>{error}</p>;
 
+  /**
+   * Handles the event when the user wants to view all products,
+   * redirecting to the products page.
+   *
+   * @function
+   */
   const handleViewAll = () => {
     router.push('/products?page=1');
   };
 
+  /**
+   * Handles the sign-out process for the authenticated user,
+   * redirecting to the home page after signing out.
+   *
+   * @async
+   * @function
+   */
   const handleSignOut = async () => {
     try {
       await signOut(auth); // Sign out the user

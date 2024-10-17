@@ -6,7 +6,17 @@ import Link from 'next/link';
 import Head from 'next/head';
 import styles from './products.module.css';
 
-// Fetch products function
+/**
+ * Fetches products from the API with optional filters and sorting.
+ * 
+ * @param {number} limit - The maximum number of products to fetch.
+ * @param {number} page - The page number for pagination.
+ * @param {string} searchQuery - The search query to filter products.
+ * @param {string} category - The category to filter products.
+ * @param {string} sort - The sorting order (e.g., "asc" or "desc").
+ * @returns {Promise<Object[]>} - A promise that resolves to the list of products.
+ * @throws {Error} - Throws an error if the fetch fails.
+ */
 const fetchProducts = async (limit, page, searchQuery, category, sort) => {
   const query = searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : '';
   const categoryFilter = category ? `&category=${encodeURIComponent(category)}` : '';
@@ -18,7 +28,12 @@ const fetchProducts = async (limit, page, searchQuery, category, sort) => {
   return response.json();
 };
 
-// Fetch categories function
+/**
+ * Fetches the list of product categories from the API.
+ * 
+ * @returns {Promise<Object[]>} - A promise that resolves to the list of categories.
+ * @throws {Error} - Throws an error if the fetch fails.
+ */
 const fetchCategories = async () => {
   const response = await fetch('/api/categories');
   if (!response.ok) {
@@ -27,6 +42,11 @@ const fetchCategories = async () => {
   return response.json();
 };
 
+/**
+ * ProductsPage component that displays a list of products with filtering, sorting, and pagination options.
+ * 
+ * @returns {JSX.Element} - The rendered ProductsPage component.
+ */
 export default function ProductsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -60,37 +80,66 @@ export default function ProductsPage() {
       .finally(() => setLoading(false));
   }, [page, searchQuery, category, sort]); // Ensure sort is included in the dependencies
 
+  /**
+   * Handles the navigation to the next page of products.
+   */
   const handleNextPage = () => {
     router.push(`/products?page=${page + 1}&search=${search}&category=${category}&sort=${sort}`);
   };
 
+  /**
+   * Handles the navigation to the previous page of products.
+   */
   const handlePreviousPage = () => {
     if (page > 1) {
       router.push(`/products?page=${page - 1}&search=${search}&category=${category}&sort=${sort}`);
     }
   };
 
+  /**
+   * Updates the search query state when the input changes.
+   * 
+   * @param {Event} e - The input change event.
+   */
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
   };
 
+  /**
+   * Handles the submission of the search form.
+   * 
+   * @param {Event} e - The submit event.
+   */
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     router.push(`/products?page=1&search=${search}&category=${category}&sort=${sort}`);
   };
 
+  /**
+   * Updates the category state and navigates to the first page of products for the selected category.
+   * 
+   * @param {Event} e - The change event from the category dropdown.
+   */
   const handleCategoryChange = (e) => {
     const selectedCategory = e.target.value;
     setCategory(selectedCategory);
     router.push(`/products?page=1&search=${search}&category=${selectedCategory}&sort=${sort}`); // Ensure this triggers a new fetch
   };
 
+  /**
+   * Updates the sort state and navigates to the first page of products for the selected sort order.
+   * 
+   * @param {Event} e - The change event from the sort dropdown.
+   */
   const handleSortChange = (e) => {
     const selectedSort = e.target.value;
     setSort(selectedSort);
     router.push(`/products?page=1&search=${search}&category=${category}&sort=${selectedSort}`); // Ensure this triggers a new fetch
   };
 
+  /**
+   * Resets the search, category, and sort filters to their default values.
+   */
   const handleReset = () => {
     setSearch('');
     setCategory('');
